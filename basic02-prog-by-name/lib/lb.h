@@ -10,6 +10,8 @@
 #include "hash.h"
 #include "ids.h"
 
+#include <bpf_legacy.h>
+
 #ifdef ENABLE_IPV6
 
 struct bpf_map_def SEC("maps") LB6_REVERSE_NAT_MAP = {
@@ -65,12 +67,13 @@ struct bpf_map_def SEC("maps") LB6_HEALTH_MAP = {
 #endif
 
 #if LB_SELECTION == LB_SELECTION_MAGLEV
-struct bpf_map_def SEC("maps") LB6_MAGLEV_MAP_OUTER = {
+struct bpf_map_def_legacy SEC("maps") LB6_MAGLEV_MAP_OUTER = {
   .type = BPF_MAP_TYPE_HASH_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
-  .max_entries = CILIUM_LB_MAP_MAX_ENTRIES,
-  .map_flags = CONDITIONAL_PREALLOC,
+  .max_entries = 1,//CILIUM_LB_MAP_MAX_ENTRIES,
+  .inner_map_idx = 0,
+  //.map_flags = CONDITIONAL_PREALLOC,
 };
 /* Maglev inner map definition */
 // struct bpf_map_def SEC("maps") MAGLEV_MAP_INNER = {
@@ -138,11 +141,11 @@ struct bpf_map_def SEC("maps") LB4_HEALTH_MAP = {
 
 #if LB_SELECTION == LB_SELECTION_MAGLEV
 struct bpf_map_def SEC("maps") LB4_MAGLEV_MAP_OUTER = {
-  .type = BPF_MAP_TYPE_HASH_OF_MAPS,
+  .type = BPF_MAP_TYPE_ARRAY_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
   .max_entries = CILIUM_LB_MAP_MAX_ENTRIES,
-  .map_flags = CONDITIONAL_PREALLOC,
+  //.map_flags = CONDITIONAL_PREALLOC,
 };
 /* Maglev inner map definition */
 // struct bpf_map_def SEC("maps") MAGLEV_MAP_INNER = {
