@@ -45,6 +45,8 @@ LDFLAGS ?= -L$(LIBBPF_DIR)
 
 BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/
 BPF_CFLAGS += -Iinclude -I.
+BPF_CFLAGS += -DSKIP_DEBUG=1 -DENABLE_IPV4=1 -DENABLE_IPV6=1 -DENABLE_HOST_SERVICES_TCP=1 -DENABLE_HOST_SERVICES_UDP=1 -DENABLE_HOST_REDIRECT=1 -DENABLE_ROUTING=1 -DNO_REDIRECT=1 -DPOLICY_VERDICT_NOTIFY=1 -DALLOW_ICMP_FRAG_NEEDED=1 -DENABLE_IDENTITY_MARK=1 -DMONITOR_AGGREGATION=3 -DCT_REPORT_FLAGS=0x0002 -DENABLE_HOST_FIREWALL=1 -DHAVE_LPM_TRIE_MAP_TYPE=1 -DHAVE_LRU_HASH_MAP_TYPE=1 -DENABLE_MASQUERADE=1 -DENABLE_SRC_RANGE_CHECK=1 -DENABLE_NODEPORT=1 -DENABLE_NODEPORT_ACCELERATION=1 -DENABLE_SESSION_AFFINITY=1 -DENABLE_DSR_ICMP_ERRORS=1 -DENABLE_DSR=1 -DENABLE_DSR_HYBRID=1 -DENABLE_IPV4_FRAGMENTS=1 -DENABLE_PREFILTER=1 -DLB_SELECTION=1 -DLB_SELECTION_MAGLEV=1  -D__NR_CPUS__=96
+BPF_CFLAGS += -O2 -g -target bpf -std=gnu89 -emit-llvm -Wall -Werror -Wshadow -Wno-address-of-packed-member -Wno-unknown-warning-option -Wno-gnu-variable-sized-type-not-at-end -Wdeclaration-after-statement # -nostdinc -Wextra (complains about unused params)
 
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 
@@ -110,13 +112,15 @@ $(USER_TARGETS): %: %.c  $(OBJECT_LIBBPF) Makefile $(COMMON_MK) $(COMMON_OBJS) $
 
 $(XDP_OBJ): %.o: %.c  Makefile $(COMMON_MK) $(KERN_USER_H) $(EXTRA_DEPS) $(OBJECT_LIBBPF)
 	$(CLANG) -S \
-	    -target bpf \
 	    -D __BPF_TRACING__ \
 	    $(BPF_CFLAGS) \
-	    -Wall \
+		-c -g -o ${@:.o=.ll} $<
+	$(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
+
+# 	    -target bpf \
+		-Wall \
 	    -Wno-unused-value \
 	    -Wno-pointer-sign \
 	    -Wno-compare-distinct-pointer-types \
 	    -Werror \
-	    -O2 -emit-llvm -c -g -o ${@:.o=.ll} $<
-	$(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
+	    -O2 -emit-llvm 

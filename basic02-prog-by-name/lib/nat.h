@@ -1067,7 +1067,7 @@ ct_delete4(void *map, struct ipv4_ct_tuple *tuple, struct __ctx_buff *ctx)
 
 	err = bpf_map_delete_elem(map, tuple);
 	if (err < 0)
-		cilium_dbg(ctx, DBG_ERROR_RET, BPF_FUNC_bpf_map_delete_elem, err);
+		cilium_dbg(ctx, DBG_ERROR_RET, BPF_FUNC_map_delete_elem, err);
 	else
 		snat_v4_delete_tuples(tuple);
 }
@@ -1079,7 +1079,7 @@ ct_delete6(void *map, struct ipv6_ct_tuple *tuple, struct __ctx_buff *ctx)
 
 	err = bpf_map_delete_elem(map, tuple);
 	if (err < 0)
-		cilium_dbg(ctx, DBG_ERROR_RET, BPF_FUNC_bpf_map_delete_elem, err);
+		cilium_dbg(ctx, DBG_ERROR_RET, BPF_FUNC_map_delete_elem, err);
 	else
 		snat_v6_delete_tuples(tuple);
 }

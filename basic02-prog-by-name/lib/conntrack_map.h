@@ -24,7 +24,7 @@ struct bpf_map_def SEC("maps") CT_MAP_TCP6 = {
 #ifndef HAVE_LRU_HASH_MAP_TYPE
 	.map_flags = CONDITIONAL_PREALLOC,
 #endif
-}
+};
 
 struct bpf_map_def SEC("maps") CT_MAP_ANY6 = {
 	.type = CT_MAP_TYPE,
@@ -34,7 +34,7 @@ struct bpf_map_def SEC("maps") CT_MAP_ANY6 = {
 #ifndef HAVE_LRU_HASH_MAP_TYPE
 	.map_flags = CONDITIONAL_PREALLOC,
 #endif
-}
+};
 
 static __always_inline void *
 get_ct_map6(const struct ipv6_ct_tuple *tuple)
@@ -56,7 +56,7 @@ struct bpf_map_def SEC("maps") CT_MAP_TCP4 = {
 #ifndef HAVE_LRU_HASH_MAP_TYPE
 	.map_flags = CONDITIONAL_PREALLOC,
 #endif
-}
+};
 
 struct bpf_map_def SEC("maps") CT_MAP_ANY4 = {
 	.type = CT_MAP_TYPE,
@@ -66,7 +66,7 @@ struct bpf_map_def SEC("maps") CT_MAP_ANY4 = {
 #ifndef HAVE_LRU_HASH_MAP_TYPE
 	.map_flags = CONDITIONAL_PREALLOC,
 #endif
-}
+};
 
 static __always_inline void *
 get_ct_map4(const struct ipv4_ct_tuple *tuple)

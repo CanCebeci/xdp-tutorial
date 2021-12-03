@@ -65,7 +65,7 @@ struct bpf_map_def SEC("maps") CIDR4_LMAP_NAME = { // Ignored map pinning for no
     .value_size = sizeof(struct lpm_val),
     .max_entries = CIDR4_LMAP_ELEMS,
 		.map_flags = BPF_F_NO_PREALLOC,
-}
+};
 
 #endif /* CIDR4_LPM_PREFILTER */
 #endif /* CIDR4_FILTER */
@@ -87,7 +87,7 @@ struct bpf_map_def SEC("maps") CIDR6_LMAP_NAME = { // Ignored map pinning for no
     .value_size = sizeof(struct lpm_val),
     .max_entries = CIDR4_LMAP_ELEMS,
 		.map_flags = BPF_F_NO_PREALLOC,
-}
+};
 #endif /* CIDR6_LPM_PREFILTER */
 #endif /* CIDR6_FILTER */
 #endif /* ENABLE_PREFILTER */
