@@ -8,6 +8,7 @@ static const char *__doc__ = "XDP loader\n"
 #include <string.h>
 #include <errno.h>
 #include <getopt.h>
+#include <sys/resource.h> // CAN
 
 #include <bpf/bpf.h>
 #include <bpf/libbpf.h>
@@ -157,6 +158,15 @@ static void list_avail_progs(struct bpf_object *obj)
 
 int main(int argc, char **argv)
 {
+	// --- (see https://github.com/xdp-project/xdp-tutorial/issues/63) --- //
+	struct rlimit r = {RLIM_INFINITY, RLIM_INFINITY};
+
+	if (setrlimit(RLIMIT_MEMLOCK, &r)) {
+			perror("setrlimit(RLIMIT_MEMLOCK)");
+			return 1;
+	}
+	// ------------------------------------------------------------------- //
+
 	struct bpf_object *bpf_obj;
 
 	struct config cfg = {
