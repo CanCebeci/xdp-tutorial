@@ -61,7 +61,7 @@ bpf_skip_nodeport(struct __ctx_buff *ctx)
 
 #ifdef ENABLE_NODEPORT
 #ifdef ENABLE_IPV4
-struct bpf_map_def SEC(".maps") NODEPORT_NEIGH4 = {
+struct bpf_map_def SEC("maps") NODEPORT_NEIGH4 = {
     .type = BPF_MAP_TYPE_LRU_HASH,
     .key_size = sizeof(__be32),  /* ipv4 addr */
     .value_size = sizeof(union macaddr), /* hw addr */
@@ -70,7 +70,7 @@ struct bpf_map_def SEC(".maps") NODEPORT_NEIGH4 = {
 #endif /* ENABLE_IPV4 */
 
 #ifdef ENABLE_IPV6
-struct bpf_map_def SEC(".maps") NODEPORT_NEIGH6 = {
+struct bpf_map_def SEC("maps") NODEPORT_NEIGH6 = {
     .type = BPF_MAP_TYPE_LRU_HASH,
     .key_size = sizeof(union v6addr),  /* ipv6 addr */
     .value_size = sizeof(union macaddr), /* hw addr */

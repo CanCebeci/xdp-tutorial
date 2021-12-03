@@ -22,7 +22,7 @@ struct ipv4_frag_l4ports {
 	__be16	dport;
 } __packed;
 
-struct bpf_map_def SEC(".maps") IPV4_FRAG_DATAGRAMS_MAP = {
+struct bpf_map_def SEC("maps") IPV4_FRAG_DATAGRAMS_MAP = {
 	.type = BPF_MAP_TYPE_LRU_HASH,
 	.key_size = sizeof(struct ipv4_frag_id),
 	.value_size = sizeof(struct ipv4_frag_l4ports),

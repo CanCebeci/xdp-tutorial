@@ -12,7 +12,7 @@
 
 #ifdef ENABLE_IPV6
 
-struct bpf_map_def SEC(".maps") LB6_REVERSE_NAT_MAP = {
+struct bpf_map_def SEC("maps") LB6_REVERSE_NAT_MAP = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = sizeof(__u16),
 	.value_size = sizeof(struct lb6_reverse_nat),
@@ -20,7 +20,7 @@ struct bpf_map_def SEC(".maps") LB6_REVERSE_NAT_MAP = {
 	.map_flags = CONDITIONAL_PREALLOC,
 };
 
-struct bpf_map_def SEC(".maps") LB6_SERVICES_MAP_V2 = {
+struct bpf_map_def SEC("maps") LB6_SERVICES_MAP_V2 = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = sizeof(struct lb6_key),
 	.value_size = sizeof(struct lb6_service),
@@ -28,7 +28,7 @@ struct bpf_map_def SEC(".maps") LB6_SERVICES_MAP_V2 = {
 	.map_flags = CONDITIONAL_PREALLOC,
 };
 
-struct bpf_map_def SEC(".maps") LB6_BACKEND_MAP_V2 = {
+struct bpf_map_def SEC("maps") LB6_BACKEND_MAP_V2 = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = sizeof(__u32),
 	.value_size = sizeof(struct lb6_backend),
@@ -37,7 +37,7 @@ struct bpf_map_def SEC(".maps") LB6_BACKEND_MAP_V2 = {
 };
 
 #ifdef ENABLE_SESSION_AFFINITY
-struct bpf_map_def SEC(".maps") LB6_AFFINITY_MAP = {
+struct bpf_map_def SEC("maps") LB6_AFFINITY_MAP = {
 	.type = BPF_MAP_TYPE_LRU_HASH,
 	.key_size = sizeof(struct lb6_affinity_key),
 	.value_size = sizeof(struct lb_affinity_val),
@@ -46,7 +46,7 @@ struct bpf_map_def SEC(".maps") LB6_AFFINITY_MAP = {
 #endif
 
 #ifdef ENABLE_SRC_RANGE_CHECK
-struct bpf_map_def SEC(".maps") LB6_SRC_RANGE_MAP = {
+struct bpf_map_def SEC("maps") LB6_SRC_RANGE_MAP = {
 	.type = BPF_MAP_TYPE_LPM_TRIE,
 	.key_size = sizeof(struct lb6_src_range_key),
 	.value_size = sizeof(__u8),
@@ -56,7 +56,7 @@ struct bpf_map_def SEC(".maps") LB6_SRC_RANGE_MAP = {
 #endif
 
 #ifdef ENABLE_HEALTH_CHECK
-struct bpf_map_def SEC(".maps") LB6_HEALTH_MAP = {
+struct bpf_map_def SEC("maps") LB6_HEALTH_MAP = {
 	.type = BPF_MAP_TYPE_LRU_HASH,
 	.key_size = sizeof(__sock_cookie),
 	.value_size = sizeof(struct lb6_health),
@@ -65,7 +65,7 @@ struct bpf_map_def SEC(".maps") LB6_HEALTH_MAP = {
 #endif
 
 #if LB_SELECTION == LB_SELECTION_MAGLEV
-struct bpf_map_def SEC(".maps") LB6_MAGLEV_MAP_OUTER = {
+struct bpf_map_def SEC("maps") LB6_MAGLEV_MAP_OUTER = {
   .type = BPF_MAP_TYPE_HASH_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
@@ -73,7 +73,7 @@ struct bpf_map_def SEC(".maps") LB6_MAGLEV_MAP_OUTER = {
   .map_flags = CONDITIONAL_PREALLOC,
 };
 /* Maglev inner map definition */
-// struct bpf_map_def SEC(".maps") MAGLEV_MAP_INNER = {
+// struct bpf_map_def SEC("maps") MAGLEV_MAP_INNER = {
 //   .type = BPF_MAP_TYPE_ARRAY,
 //   .key_size = sizeof(__u32),
 //   .value_size = sizeof(__u32) * LB_MAGLEV_LUT_SIZE,
@@ -83,7 +83,7 @@ struct bpf_map_def SEC(".maps") LB6_MAGLEV_MAP_OUTER = {
 #endif /* ENABLE_IPV6 */
 
 #ifdef ENABLE_IPV4
-struct bpf_map_def SEC(".maps") LB4_REVERSE_NAT_MAP = {
+struct bpf_map_def SEC("maps") LB4_REVERSE_NAT_MAP = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = sizeof(__u16),
 	.value_size = sizeof(struct lb4_reverse_nat),
@@ -91,7 +91,7 @@ struct bpf_map_def SEC(".maps") LB4_REVERSE_NAT_MAP = {
 	.map_flags = CONDITIONAL_PREALLOC,
 };
 
-struct bpf_map_def SEC(".maps") LB4_SERVICES_MAP_V2 = {
+struct bpf_map_def SEC("maps") LB4_SERVICES_MAP_V2 = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = sizeof(struct lb4_key),
 	.value_size = sizeof(struct lb4_service),
@@ -99,7 +99,7 @@ struct bpf_map_def SEC(".maps") LB4_SERVICES_MAP_V2 = {
 	.map_flags = CONDITIONAL_PREALLOC,
 };
 
-struct bpf_map_def SEC(".maps") LB4_BACKEND_MAP_V2 = {
+struct bpf_map_def SEC("maps") LB4_BACKEND_MAP_V2 = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = sizeof(__u32),
 	.value_size = sizeof(struct lb4_backend),
@@ -108,7 +108,7 @@ struct bpf_map_def SEC(".maps") LB4_BACKEND_MAP_V2 = {
 };
 
 #ifdef ENABLE_SESSION_AFFINITY
-struct bpf_map_def SEC(".maps") LB4_AFFINITY_MAP = {
+struct bpf_map_def SEC("maps") LB4_AFFINITY_MAP = {
 	.type = BPF_MAP_TYPE_LRU_HASH,
 	.key_size = sizeof(struct lb4_affinity_key),
 	.value_size = sizeof(struct lb_affinity_val),
@@ -117,7 +117,7 @@ struct bpf_map_def SEC(".maps") LB4_AFFINITY_MAP = {
 #endif
 
 #ifdef ENABLE_SRC_RANGE_CHECK
-struct bpf_map_def SEC(".maps") LB4_SRC_RANGE_MAP = {
+struct bpf_map_def SEC("maps") LB4_SRC_RANGE_MAP = {
 	.type = BPF_MAP_TYPE_LPM_TRIE,
 	.key_size = sizeof(struct lb4_src_range_key),
 	.value_size = sizeof(__u8),
@@ -127,7 +127,7 @@ struct bpf_map_def SEC(".maps") LB4_SRC_RANGE_MAP = {
 #endif
 
 #ifdef ENABLE_HEALTH_CHECK
-struct bpf_map_def SEC(".maps") LB4_HEALTH_MAP = {
+struct bpf_map_def SEC("maps") LB4_HEALTH_MAP = {
 	.type = BPF_MAP_TYPE_LRU_HASH,
 	.key_size = sizeof(__sock_cookie),
 	.value_size = sizeof(struct lb4_health),
@@ -137,7 +137,7 @@ struct bpf_map_def SEC(".maps") LB4_HEALTH_MAP = {
 
 
 #if LB_SELECTION == LB_SELECTION_MAGLEV
-struct bpf_map_def SEC(".maps") LB4_MAGLEV_MAP_OUTER = {
+struct bpf_map_def SEC("maps") LB4_MAGLEV_MAP_OUTER = {
   .type = BPF_MAP_TYPE_HASH_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
@@ -145,7 +145,7 @@ struct bpf_map_def SEC(".maps") LB4_MAGLEV_MAP_OUTER = {
   .map_flags = CONDITIONAL_PREALLOC,
 };
 /* Maglev inner map definition */
-// struct bpf_map_def SEC(".maps") MAGLEV_MAP_INNER = {
+// struct bpf_map_def SEC("maps") MAGLEV_MAP_INNER = {
 //   .type = BPF_MAP_TYPE_ARRAY,
 //   .key_size = sizeof(__u32),
 //   .value_size = sizeof(__u32) * LB_MAGLEV_LUT_SIZE,
@@ -155,7 +155,7 @@ struct bpf_map_def SEC(".maps") LB4_MAGLEV_MAP_OUTER = {
 #endif /* ENABLE_IPV4 */
 
 #ifdef ENABLE_SESSION_AFFINITY
-struct bpf_map_def SEC(".maps") LB_AFFINITY_MATCH_MAP = {
+struct bpf_map_def SEC("maps") LB_AFFINITY_MATCH_MAP = {
   .type = BPF_MAP_TYPE_HASH,
   .key_size = sizeof(struct lb_affinity_match),
   .value_size = sizeof(__u8),

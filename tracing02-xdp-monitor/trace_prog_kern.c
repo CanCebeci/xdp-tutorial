@@ -4,7 +4,7 @@
 
 #include "bpf_legacy.h"
 
-struct bpf_map_def SEC(".maps") redirect_err_cnt = {
+struct bpf_map_def SEC("maps") redirect_err_cnt = {
 	.type		= BPF_MAP_TYPE_PERCPU_ARRAY,
 	.key_size	= sizeof(__u32),
 	.value_size	= sizeof(__u64),
@@ -13,7 +13,7 @@ struct bpf_map_def SEC(".maps") redirect_err_cnt = {
 };
 
 #define XDP_UNKNOWN	XDP_REDIRECT + 1
-struct bpf_map_def SEC(".maps") exception_cnt = {
+struct bpf_map_def SEC("maps") exception_cnt = {
 	.type		= BPF_MAP_TYPE_PERCPU_ARRAY,
 	.key_size	= sizeof(__u32),
 	.value_size	= sizeof(__u64),
@@ -126,14 +126,14 @@ struct datarec {
 };
 #define MAX_CPUS 64
 
-struct bpf_map_def SEC(".maps") cpumap_enqueue_cnt = {
+struct bpf_map_def SEC("maps") cpumap_enqueue_cnt = {
 	.type		= BPF_MAP_TYPE_PERCPU_ARRAY,
 	.key_size	= sizeof(__u32),
 	.value_size	= sizeof(struct datarec),
 	.max_entries	= MAX_CPUS,
 };
 
-struct bpf_map_def SEC(".maps") cpumap_kthread_cnt = {
+struct bpf_map_def SEC("maps") cpumap_kthread_cnt = {
 	.type		= BPF_MAP_TYPE_PERCPU_ARRAY,
 	.key_size	= sizeof(__u32),
 	.value_size	= sizeof(struct datarec),
@@ -207,7 +207,7 @@ int trace_xdp_cpumap_kthread(struct cpumap_kthread_ctx *ctx)
 	return 0;
 }
 
-struct bpf_map_def SEC(".maps") devmap_xmit_cnt = {
+struct bpf_map_def SEC("maps") devmap_xmit_cnt = {
 	.type		= BPF_MAP_TYPE_PERCPU_ARRAY,
 	.key_size	= sizeof(__u32),
 	.value_size	= sizeof(struct datarec),

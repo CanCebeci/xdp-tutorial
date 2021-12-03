@@ -10,7 +10,7 @@
 
 #include "bpf/compiler.h"
 
-struct bpf_map_def SEC(".maps") ENDPOINTS_MAP = {
+struct bpf_map_def SEC("maps") ENDPOINTS_MAP = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct endpoint_key),
     .value_size = sizeof(struct endpoint_info),
@@ -18,15 +18,16 @@ struct bpf_map_def SEC(".maps") ENDPOINTS_MAP = {
 		.map_flags = CONDITIONAL_PREALLOC,
 };
 
-struct bpf_map_def SEC(".maps") METRICS_MAP = {
+struct bpf_map_def SEC("maps") METRICS_MAP = {
     .type = BPF_MAP_TYPE_PERCPU_HASH,
     .key_size = sizeof(struct metrics_key),
     .value_size = sizeof(struct metrics_value),
     .max_entries = METRICS_MAP_SIZE,
 		.map_flags = CONDITIONAL_PREALLOC,
 };
-
+//#define SKIP_POLICY_MAP
 #ifndef SKIP_POLICY_MAP
+asdfasdffsgadfh
 /* Global map to jump into policy enforcement of receiving endpoint */
 struct bpf_map_def SEC("maps") POLICY_CALL_MAP = {
 	.type		= BPF_MAP_TYPE_PROG_ARRAY,
@@ -38,7 +39,7 @@ struct bpf_map_def SEC("maps") POLICY_CALL_MAP = {
 #endif /* SKIP_POLICY_MAP */
 
 #ifdef ENABLE_BANDWIDTH_MANAGER
-struct bpf_map_def SEC(".maps") THROTTLE_MAP = {
+struct bpf_map_def SEC("maps") THROTTLE_MAP = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct edt_id),
     .value_size = sizeof(struct edt_info),
@@ -49,7 +50,7 @@ struct bpf_map_def SEC(".maps") THROTTLE_MAP = {
 
 /* Map to link endpoint id to per endpoint cilium_policy map */
 #ifdef SOCKMAP
-struct bpf_map_def SEC(".maps") EP_POLICY_MAP = {
+struct bpf_map_def SEC("maps") EP_POLICY_MAP = {
     .type = BPF_MAP_TYPE_HASH_OF_MAPS,
     .key_size = sizeof(struct endpoint_key),
     .value_size = sizeof(int),
@@ -59,7 +60,7 @@ struct bpf_map_def SEC(".maps") EP_POLICY_MAP = {
 
 #ifdef POLICY_MAP
 /* Per-endpoint policy enforcement map */
-struct bpf_map_def SEC(".maps") POLICY_MAP = {
+struct bpf_map_def SEC("maps") POLICY_MAP = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct policy_key),
     .value_size = sizeof(struct policy_entry),
@@ -68,6 +69,7 @@ struct bpf_map_def SEC(".maps") POLICY_MAP = {
 };
 #endif
 
+//#define SKIP_CALLS_MAP
 #ifndef SKIP_CALLS_MAP
 /* Private per EP map for internal tail calls */
 struct bpf_map_def SEC("maps") CALLS_MAP = {
@@ -80,7 +82,7 @@ struct bpf_map_def SEC("maps") CALLS_MAP = {
 #endif /* SKIP_CALLS_MAP */
 
 #ifdef ENCAP_IFINDEX
-struct bpf_map_def SEC(".maps") TUNNEL_MAP = {
+struct bpf_map_def SEC("maps") TUNNEL_MAP = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct endpoint_key),
     .value_size = sizeof(struct endpoint_key),
@@ -89,7 +91,9 @@ struct bpf_map_def SEC(".maps") TUNNEL_MAP = {
 };
 #endif
 
+#undef ENABLE_CUSTOM_CALLS
 #if defined(ENABLE_CUSTOM_CALLS) && defined(CUSTOM_CALLS_MAP)
+asfhsfhfha
 /* Private per-EP map for tail calls to user-defined programs.
  * CUSTOM_CALLS_MAP is a per-EP map name, only defined for programs that need
  * to use the map, so we do not want to compile this definition if
@@ -158,7 +162,7 @@ struct ipcache_key {
 } __packed;
 
 /* Global IP -> Identity map for applying egress label-based policy */
-struct bpf_map_def SEC(".maps") IPCACHE_MAP = {
+struct bpf_map_def SEC("maps") IPCACHE_MAP = {
     .type = LPM_MAP_TYPE,
     .key_size = sizeof(struct ipcache_key),
     .value_size = sizeof(struct remote_endpoint_info),
@@ -166,7 +170,7 @@ struct bpf_map_def SEC(".maps") IPCACHE_MAP = {
 		.map_flags = BPF_F_NO_PREALLOC,
 };
 
-struct bpf_map_def SEC(".maps") ENCRYPT_MAP = {
+struct bpf_map_def SEC("maps") ENCRYPT_MAP = {
     .type = BPF_MAP_TYPE_ARRAY,
     .key_size = sizeof(__u32),
     .value_size = sizeof(struct encrypt_config),
@@ -174,7 +178,7 @@ struct bpf_map_def SEC(".maps") ENCRYPT_MAP = {
 };
 
 #ifdef ENABLE_EGRESS_GATEWAY
-struct bpf_map_def SEC(".maps") EGRESS_POLICY_MAP = {
+struct bpf_map_def SEC("maps") EGRESS_POLICY_MAP = {
     .type = LPM_MAP_TYPE,
     .key_size = sizeof(struct egress_gw_policy_key),
     .value_size = sizeof(struct egress_gw_policy_entry),

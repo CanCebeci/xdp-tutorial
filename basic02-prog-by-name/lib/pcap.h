@@ -107,7 +107,7 @@ struct capture_cache {
 	__u16 cap_len;
 };
 
-struct bpf_map_def SEC(".maps") cilium_capture_cache = {
+struct bpf_map_def SEC("maps") cilium_capture_cache = {
     .type = BPF_MAP_TYPE_PERCPU_ARRAY,
     .key_size = sizeof(__u32),  /* ipv6 addr */
     .value_size = sizeof(struct capture_cache), /* hw addr */
@@ -145,7 +145,7 @@ struct capture6_wcard {
 };
 
 #ifdef ENABLE_IPV4
-struct bpf_map_def SEC(".maps") CAPTURE4_RULES = {
+struct bpf_map_def SEC("maps") CAPTURE4_RULES = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct capture4_wcard), 
     .value_size = sizeof(struct capture_rule),
@@ -256,7 +256,7 @@ _Pragma("unroll")
 #endif /* ENABLE_IPV4 */
 
 #ifdef ENABLE_IPV6
-struct bpf_map_def SEC(".maps") CAPTURE6_RULES = {
+struct bpf_map_def SEC("maps") CAPTURE6_RULES = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct capture6_wcard),  
     .value_size = sizeof(struct capture_rule),

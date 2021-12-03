@@ -110,7 +110,7 @@ struct ipv4_nat_target {
 };
 
 #if defined(ENABLE_IPV4) && defined(ENABLE_NODEPORT)
-struct bpf_map_def SEC(".maps") SNAT_MAPPING_IPV4 = {
+struct bpf_map_def SEC("maps") SNAT_MAPPING_IPV4 = {
     .type = NAT_MAP_TYPE,
     .key_size = sizeof(struct ipv4_ct_tuple),
     .value_size = sizeof(struct ipv4_nat_entry),
@@ -121,7 +121,7 @@ struct bpf_map_def SEC(".maps") SNAT_MAPPING_IPV4 = {
 };
 
 #ifdef ENABLE_IP_MASQ_AGENT
-struct bpf_map_def SEC(".maps") IP_MASQ_AGENT_IPV4 = {
+struct bpf_map_def SEC("maps") IP_MASQ_AGENT_IPV4 = {
     .type = BPF_MAP_TYPE_LPM_TRIE,
     .key_size = sizeof(struct lpm_v4_key),
     .value_size = sizeof(struct lpm_val),
@@ -603,7 +603,7 @@ struct ipv6_nat_target {
 };
 
 #if defined(ENABLE_IPV6) && defined(ENABLE_NODEPORT)
-struct bpf_map_def SEC(".maps") SNAT_MAPPING_IPV6 = {
+struct bpf_map_def SEC("maps") SNAT_MAPPING_IPV6 = {
     .type = NAT_MAP_TYPE,
     .key_size = sizeof(struct ipv6_ct_tuple),
     .value_size = sizeof(struct ipv6_nat_entry),

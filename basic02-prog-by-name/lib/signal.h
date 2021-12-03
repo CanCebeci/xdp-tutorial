@@ -6,7 +6,7 @@
 
 #include <bpf/api.h>
 
-struct bpf_map_def SEC(".maps") SIGNAL_MAP = {
+struct bpf_map_def SEC("maps") SIGNAL_MAP = {
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(__u32), 
     .value_size = sizeof(__u32), 

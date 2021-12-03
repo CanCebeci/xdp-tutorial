@@ -7,7 +7,7 @@
 #include "compiler.h"
 
 #ifndef __section_tail
-# define __section_tail(ID, KEY)	__section(__stringify(ID) "/" __stringify(KEY))
+# define __section_tail(ID, KEY)	__section("xdp_" __stringify(ID) "/" __stringify(KEY))
 #endif
 
 #ifndef __section_license

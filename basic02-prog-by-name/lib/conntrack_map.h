@@ -16,7 +16,7 @@
 
 #ifdef ENABLE_IPV6
 
-struct bpf_map_def SEC(".maps") CT_MAP_TCP6 = {
+struct bpf_map_def SEC("maps") CT_MAP_TCP6 = {
 	.type = CT_MAP_TYPE,
 	.key_size = sizeof(struct ipv6_ct_tuple),
 	.value_size = sizeof(struct ct_entry),
@@ -26,7 +26,7 @@ struct bpf_map_def SEC(".maps") CT_MAP_TCP6 = {
 #endif
 };
 
-struct bpf_map_def SEC(".maps") CT_MAP_ANY6 = {
+struct bpf_map_def SEC("maps") CT_MAP_ANY6 = {
 	.type = CT_MAP_TYPE,
 	.key_size = sizeof(struct ipv6_ct_tuple),
 	.value_size = sizeof(struct ct_entry),
@@ -48,7 +48,7 @@ get_ct_map6(const struct ipv6_ct_tuple *tuple)
 
 #ifdef ENABLE_IPV4
 
-struct bpf_map_def SEC(".maps") CT_MAP_TCP4 = {
+struct bpf_map_def SEC("maps") CT_MAP_TCP4 = {
 	.type = CT_MAP_TYPE,
 	.key_size = sizeof(struct ipv4_ct_tuple),
 	.value_size = sizeof(struct ct_entry),
@@ -58,7 +58,7 @@ struct bpf_map_def SEC(".maps") CT_MAP_TCP4 = {
 #endif
 };
 
-struct bpf_map_def SEC(".maps") CT_MAP_ANY4 = {
+struct bpf_map_def SEC("maps") CT_MAP_ANY4 = {
 	.type = CT_MAP_TYPE,
 	.key_size = sizeof(struct ipv4_ct_tuple),
 	.value_size = sizeof(struct ct_entry),
