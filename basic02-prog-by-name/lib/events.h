@@ -8,7 +8,7 @@
 
 #define EVENTS_MAP_MAX_CPUS 128
 
-struct bpf_map_def SEC("maps") EVENTS_MAP = {
+struct bpf_map_def SEC(".maps") EVENTS_MAP = {
 	.type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
 	.key_size = sizeof(__u32),
 	.value_size = sizeof(__u32),

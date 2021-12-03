@@ -281,7 +281,7 @@ ctx_wire_len(const struct xdp_md *ctx)
 	return ctx_full_len(ctx);
 }
 
-struct bpf_map_def SEC("maps") cilium_xdp_scratch ={
+struct bpf_map_def SEC(".maps") cilium_xdp_scratch ={
 	.type = BPF_MAP_TYPE_PERCPU_ARRAY,
 	.key_size = sizeof(int),
 	.value_size = META_PIVOT,

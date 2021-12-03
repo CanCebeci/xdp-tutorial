@@ -48,7 +48,7 @@
 
 #ifdef CIDR4_FILTER
 
-struct bpf_map_def SEC("maps") CIDR4_HMAP_NAME = { // Ignored map pinning for now
+struct bpf_map_def SEC(".maps") CIDR4_HMAP_NAME = { // Ignored map pinning for now
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct lpm_v4_key),
     .value_size = sizeof(struct lpm_val),
@@ -59,7 +59,7 @@ struct bpf_map_def SEC("maps") CIDR4_HMAP_NAME = { // Ignored map pinning for no
 
 #ifdef CIDR4_LPM_PREFILTER
 
-struct bpf_map_def SEC("maps") CIDR4_LMAP_NAME = { // Ignored map pinning for now
+struct bpf_map_def SEC(".maps") CIDR4_LMAP_NAME = { // Ignored map pinning for now
     .type = BPF_MAP_TYPE_LPM_TRIE,
     .key_size = sizeof(struct lpm_v4_key),
     .value_size = sizeof(struct lpm_val),
@@ -71,7 +71,7 @@ struct bpf_map_def SEC("maps") CIDR4_LMAP_NAME = { // Ignored map pinning for no
 #endif /* CIDR4_FILTER */
 
 #ifdef CIDR6_FILTER
-struct bpf_map_def SEC("maps") CIDR6_HMAP_NAME = { // Ignored map pinning for now
+struct bpf_map_def SEC(".maps") CIDR6_HMAP_NAME = { // Ignored map pinning for now
     .type = BPF_MAP_TYPE_HASH,
     .key_size = sizeof(struct lpm_v6_key),
     .value_size = sizeof(struct lpm_val),
@@ -81,7 +81,7 @@ struct bpf_map_def SEC("maps") CIDR6_HMAP_NAME = { // Ignored map pinning for no
 
 
 #ifdef CIDR6_LPM_PREFILTER
-struct bpf_map_def SEC("maps") CIDR6_LMAP_NAME = { // Ignored map pinning for now
+struct bpf_map_def SEC(".maps") CIDR6_LMAP_NAME = { // Ignored map pinning for now
     .type = BPF_MAP_TYPE_LPM_TRIE,
     .key_size = sizeof(struct lpm_v6_key),
     .value_size = sizeof(struct lpm_val),

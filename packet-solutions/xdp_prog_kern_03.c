@@ -16,14 +16,14 @@
 #define memcpy(dest, src, n) __builtin_memcpy((dest), (src), (n))
 #endif
 
-struct bpf_map_def SEC("maps") tx_port = {
+struct bpf_map_def SEC(".maps") tx_port = {
 	.type = BPF_MAP_TYPE_DEVMAP,
 	.key_size = sizeof(int),
 	.value_size = sizeof(int),
 	.max_entries = 256,
 };
 
-struct bpf_map_def SEC("maps") redirect_params = {
+struct bpf_map_def SEC(".maps") redirect_params = {
 	.type = BPF_MAP_TYPE_HASH,
 	.key_size = ETH_ALEN,
 	.value_size = ETH_ALEN,

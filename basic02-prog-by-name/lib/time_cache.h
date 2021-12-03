@@ -10,7 +10,7 @@
 #include "time.h"
 
 /* Per-CPU ktime cache for faster clock access. */
-struct bpf_map_def SEC("maps") cilium_ktime_cache = {
+struct bpf_map_def SEC(".maps") cilium_ktime_cache = {
     .type = BPF_MAP_TYPE_PERCPU_ARRAY,
     .key_size = sizeof(__u32), 
     .value_size = sizeof(__u64), 

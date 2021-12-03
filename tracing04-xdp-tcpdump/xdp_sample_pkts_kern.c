@@ -24,7 +24,7 @@ struct S {
 	__u16 pkt_len;
 } __packed;
 
-struct bpf_map_def SEC("maps") my_map = {
+struct bpf_map_def SEC(".maps") my_map = {
 	.type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
 	.key_size = sizeof(int),
 	.value_size = sizeof(__u32),
