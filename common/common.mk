@@ -44,6 +44,7 @@ CFLAGS += -I../headers/
 LDFLAGS ?= -L$(LIBBPF_DIR)
 
 BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/
+BPF_CFLAGS += -Iinclude -I.
 
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 
