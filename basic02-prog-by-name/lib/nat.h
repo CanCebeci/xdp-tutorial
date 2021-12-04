@@ -266,6 +266,10 @@ static __always_inline int snat_v4_track_local(struct __ctx_buff *ctx,
 	__u32 monitor = 0;
 	int ret, where;
 
+	if (!state) {
+		return 0;
+	}
+
 	if (state && state->common.host_local) {
 		needs_ct = true;
 	} else if (!state && dir == NAT_DIR_EGRESS) {
@@ -749,6 +753,10 @@ static __always_inline int snat_v6_track_local(struct __ctx_buff *ctx,
 	bool needs_ct = false;
 	__u32 monitor = 0;
 	int ret, where;
+
+	if (!state) {
+		return 0;
+	}
 
 	if (state && state->common.host_local) {
 		needs_ct = true;
