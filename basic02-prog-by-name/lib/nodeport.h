@@ -613,14 +613,14 @@ int tail_nodeport_nat_ipv6(struct __ctx_buff *ctx)
 				goto drop_err;
 
 			BPF_V6(target.addr, ROUTER_IP);
-			fib_params.l.ifindex = ENCAP_IFINDEX;
+			fib_params.ifindex = ENCAP_IFINDEX;
 
 			/* fib lookup not necessary when going over tunnel. */
-			if (eth_store_daddr(ctx, fib_params.l.dmac, 0) < 0) {
+			if (eth_store_daddr(ctx, fib_params.dmac, 0) < 0) {
 				ret = DROP_WRITE_ERROR;
 				goto drop_err;
 			}
-			if (eth_store_saddr(ctx, fib_params.l.smac, 0) < 0) {
+			if (eth_store_saddr(ctx, fib_params.smac, 0) < 0) {
 				ret = DROP_WRITE_ERROR;
 				goto drop_err;
 			}
@@ -652,7 +652,7 @@ int tail_nodeport_nat_ipv6(struct __ctx_buff *ctx)
 		goto drop_err;
 	}
 #ifdef TUNNEL_MODE
-	if (fib_params.l.ifindex == ENCAP_IFINDEX)
+	if (fib_params.ifindex == ENCAP_IFINDEX)
 		goto out_send;
 #endif
 	if (!revalidate_data(ctx, &data, &data_end, &ip6)) {
@@ -1341,7 +1341,7 @@ static __always_inline int dsr_set_opt4(struct __ctx_buff *ctx,
 	if (ctx_store_bytes(ctx, ETH_HLEN + sizeof(*ip4),
 			    &opt, sizeof(opt), 0) < 0)
 		return DROP_INVALID;
-	if (l3_csum_replace(ctx, ETH_HLEN + offsetof(struct iphdr, check),
+	if (bpf_l3_csum_replace(ctx, ETH_HLEN + offsetof(struct iphdr, check),
 			    0, sum, 0) < 0)
 		return DROP_CSUM_L3;
 
@@ -1599,14 +1599,14 @@ int tail_nodeport_nat_ipv4(struct __ctx_buff *ctx)
 				goto drop_err;
 
 			target.addr = IPV4_GATEWAY;
-			fib_params.l.ifindex = ENCAP_IFINDEX;
+			fib_params.ifindex = ENCAP_IFINDEX;
 
 			/* fib lookup not necessary when going over tunnel. */
-			if (eth_store_daddr(ctx, fib_params.l.dmac, 0) < 0) {
+			if (eth_store_daddr(ctx, fib_params.dmac, 0) < 0) {
 				ret = DROP_WRITE_ERROR;
 				goto drop_err;
 			}
-			if (eth_store_saddr(ctx, fib_params.l.smac, 0) < 0) {
+			if (eth_store_saddr(ctx, fib_params.smac, 0) < 0) {
 				ret = DROP_WRITE_ERROR;
 				goto drop_err;
 			}
@@ -1642,7 +1642,7 @@ int tail_nodeport_nat_ipv4(struct __ctx_buff *ctx)
 		goto drop_err;
 	}
 #ifdef TUNNEL_MODE
-	if (fib_params.l.ifindex == ENCAP_IFINDEX)
+	if (fib_params.ifindex == ENCAP_IFINDEX)
 		goto out_send;
 #endif
 	if (!revalidate_data(ctx, &data, &data_end, &ip4)) {

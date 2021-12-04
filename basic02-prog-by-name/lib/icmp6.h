@@ -69,11 +69,11 @@ static __always_inline int icmp6_send_reply(struct __ctx_buff *ctx, int nh_off)
 
 	/* fixup checksums */
 	sum = csum_diff(sip.addr, 16, router_ip.addr, 16, 0);
-	if (l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
+	if (bpf_l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
 		return DROP_CSUM_L4;
 
 	sum = csum_diff(dip.addr, 16, sip.addr, 16, 0);
-	if (l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
+	if (bpf_l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
 		return DROP_CSUM_L4;
 
 	/* dmac = smac, smac = dmac */
@@ -118,7 +118,7 @@ static __always_inline int __icmp6_send_echo_reply(struct __ctx_buff *ctx,
 	sum = csum_diff(&icmp6hdr_old, sizeof(icmp6hdr_old),
 			&icmp6hdr, sizeof(icmp6hdr), 0);
 
-	if (l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
+	if (bpf_l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
 		return DROP_CSUM_L4;
 
 	return icmp6_send_reply(ctx, nh_off);
@@ -203,7 +203,7 @@ static __always_inline int send_icmp6_ndisc_adv(struct __ctx_buff *ctx,
 	/* fixup checksums */
 	sum = csum_diff(&icmp6hdr_old, sizeof(icmp6hdr_old),
 			&icmp6hdr, sizeof(icmp6hdr), 0);
-	if (l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
+	if (bpf_l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
 		return DROP_CSUM_L4;
 
 	/* get old options */
@@ -225,7 +225,7 @@ static __always_inline int send_icmp6_ndisc_adv(struct __ctx_buff *ctx,
 
 	/* fixup checksum */
 	sum = csum_diff(opts_old, sizeof(opts_old), opts, sizeof(opts), 0);
-	if (l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
+	if (bpf_l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
 		return DROP_CSUM_L4;
 
 	return icmp6_send_reply(ctx, nh_off);
@@ -320,7 +320,7 @@ static __always_inline int __icmp6_send_time_exceeded(struct __ctx_buff *ctx,
 		return DROP_UNKNOWN_L4;
 	}
 
-	if (l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
+	if (bpf_l4_csum_replace(ctx, csum_off, 0, sum, BPF_F_PSEUDO_HDR) < 0)
 		return DROP_CSUM_L4;
 
 	return icmp6_send_reply(ctx, nh_off);

@@ -578,7 +578,7 @@ lb6_select_backend_id(struct __ctx_buff *ctx,
 		      const struct ipv6_ct_tuple *tuple __maybe_unused,
 		      const struct lb6_service *svc)
 {
-	__u32 slot = (get_prandom_u32() % svc->count) + 1;
+	__u32 slot = (bpf_get_prandom_u32() % svc->count) + 1;
 	struct lb6_service *be = lb6_lookup_backend_slot(ctx, key, slot);
 
 	return be ? be->backend_id : 0;
@@ -947,7 +947,7 @@ static __always_inline int __lb4_rev_nat(struct __ctx_buff *ctx, int l3_off, int
 		return DROP_WRITE_ERROR;
 
 	sum = csum_diff(&old_sip, 4, &new_sip, 4, sum);
-	if (l3_csum_replace(ctx, l3_off + offsetof(struct iphdr, check), 0, sum, 0) < 0)
+	if (bpf_l3_csum_replace(ctx, l3_off + offsetof(struct iphdr, check), 0, sum, 0) < 0)
 		return DROP_CSUM_L3;
 
 	if (csum_off->offset &&
@@ -1106,7 +1106,7 @@ lb4_select_backend_id(struct __ctx_buff *ctx,
 		      const struct ipv4_ct_tuple *tuple __maybe_unused,
 		      const struct lb4_service *svc)
 {
-	__u32 slot = (get_prandom_u32() % svc->count) + 1;
+	__u32 slot = (bpf_get_prandom_u32() % svc->count) + 1;
 	struct lb4_service *be = lb4_lookup_backend_slot(ctx, key, slot);
 
 	return be ? be->backend_id : 0;
@@ -1168,7 +1168,7 @@ lb4_xlate(struct __ctx_buff *ctx, __be32 *new_daddr, __be32 *new_saddr __maybe_u
 		sum = csum_diff(old_saddr, 4, new_saddr, 4, sum);
 	}
 #endif /* DISABLE_LOOPBACK_LB */
-	if (l3_csum_replace(ctx, l3_off + offsetof(struct iphdr, check),
+	if (bpf_l3_csum_replace(ctx, l3_off + offsetof(struct iphdr, check),
 			    0, sum, 0) < 0)
 		return DROP_CSUM_L3;
 	if (csum_off->offset) {

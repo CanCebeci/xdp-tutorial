@@ -31,19 +31,19 @@
 
 #define META_PIVOT		field_sizeof(struct __sk_buff, cb)
 
-#define ctx_load_bytes		skb_load_bytes
-#define ctx_store_bytes		skb_store_bytes
+#define ctx_load_bytes		bpf_skb_load_bytes
+#define ctx_store_bytes		bpf_skb_store_bytes
 
-#define ctx_adjust_hroom	skb_adjust_room
+#define ctx_adjust_hroom	bpf_skb_adjust_room
 
-#define ctx_change_type		skb_change_type
-#define ctx_change_proto	skb_change_proto
-#define ctx_change_tail		skb_change_tail
+#define ctx_change_type		bpf_skb_change_type
+#define ctx_change_proto	bpf_skb_change_proto
+#define ctx_change_tail		bpf_skb_change_tail
 
-#define ctx_pull_data		skb_pull_data
+#define ctx_pull_data		bpf_skb_pull_data
 
-#define ctx_get_tunnel_key	skb_get_tunnel_key
-#define ctx_set_tunnel_key	skb_set_tunnel_key
+#define ctx_get_tunnel_key	bpf_skb_get_tunnel_key
+#define ctx_set_tunnel_key	bpf_skb_set_tunnel_key
 
 #define ctx_event_output	skb_event_output
 
@@ -59,7 +59,7 @@
 static __always_inline __maybe_unused int
 ctx_redirect(const struct __sk_buff *ctx __maybe_unused, int ifindex, __u32 flags)
 {
-	return redirect(ifindex, flags);
+	return bpf_redirect(ifindex, flags);
 }
 
 static __always_inline __maybe_unused int
@@ -71,7 +71,7 @@ ctx_redirect_peer(const struct __sk_buff *ctx __maybe_unused, int ifindex, __u32
 static __always_inline __maybe_unused int
 ctx_adjust_troom(struct __sk_buff *ctx, const __s32 len_diff)
 {
-	return skb_change_tail(ctx, ctx->len + len_diff, 0);
+	return bpf_skb_change_tail(ctx, ctx->len + len_diff, 0);
 }
 
 static __always_inline __maybe_unused __u64

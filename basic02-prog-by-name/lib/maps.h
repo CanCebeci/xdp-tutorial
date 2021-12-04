@@ -27,7 +27,6 @@ struct bpf_map_def SEC("maps") METRICS_MAP = {
 };
 //#define SKIP_POLICY_MAP
 #ifndef SKIP_POLICY_MAP
-asdfasdffsgadfh
 /* Global map to jump into policy enforcement of receiving endpoint */
 struct bpf_map_def SEC("maps") POLICY_CALL_MAP = {
 	.type		= BPF_MAP_TYPE_PROG_ARRAY,

@@ -302,7 +302,7 @@ static __always_inline int ipv4_to_ipv6(struct __ctx_buff *ctx, struct iphdr *ip
 		return csum_off;
 	csum_off += sizeof(struct ipv6hdr);
 
-	if (l4_csum_replace(ctx, nh_off + csum_off, 0, csum, csum_flags) < 0)
+	if (bpf_l4_csum_replace(ctx, nh_off + csum_off, 0, csum, csum_flags) < 0)
 		return DROP_CSUM_L4;
 
 #ifdef DEBUG_NAT46
@@ -359,7 +359,7 @@ static __always_inline int ipv6_to_ipv4(struct __ctx_buff *ctx, int nh_off,
 	    ctx_store_bytes(ctx, nh_off - 2, &protocol, 2, 0) < 0)
 		return DROP_WRITE_ERROR;
 
-	if (l3_csum_replace(ctx, nh_off + csum_off, 0, csum, 0) < 0)
+	if (bpf_l3_csum_replace(ctx, nh_off + csum_off, 0, csum, 0) < 0)
 		return DROP_CSUM_L3;
 
 	if (v6.nexthdr == IPPROTO_ICMPV6) {
@@ -386,7 +386,7 @@ static __always_inline int ipv6_to_ipv4(struct __ctx_buff *ctx, int nh_off,
 		return csum_off;
 	csum_off += sizeof(struct iphdr);
 
-	if (l4_csum_replace(ctx, nh_off + csum_off, 0, csum, csum_flags) < 0)
+	if (bpf_l4_csum_replace(ctx, nh_off + csum_off, 0, csum, csum_flags) < 0)
 		return DROP_CSUM_L4;
 
 #ifdef DEBUG_NAT46
