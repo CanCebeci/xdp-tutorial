@@ -12,7 +12,7 @@ struct bpf_map_def SEC("maps") EVENTS_MAP = {
 	.type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
 	.key_size = sizeof(__u32),
 	.value_size = sizeof(__u32),
-	.max_entries = EVENTS_MAP_MAX_CPUS,
+	.max_entries = __NR_CPUS__,//EVENTS_MAP_MAX_CPUS,
 	//.map_flags = CONDITIONAL_PREALLOC,
 };
 

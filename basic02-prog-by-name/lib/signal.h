@@ -7,10 +7,10 @@
 #include <bpf/api.h>
 
 struct bpf_map_def SEC("maps") SIGNAL_MAP = {
-    .type = BPF_MAP_TYPE_HASH,
+    .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY, //BPF_MAP_TYPE_HASH,
     .key_size = sizeof(__u32), 
     .value_size = sizeof(__u32), 
-    .max_entries = 128,
+    .max_entries = __NR_CPUS__//128,
 };
 
 enum {

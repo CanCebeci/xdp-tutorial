@@ -76,10 +76,12 @@ struct bpf_object *__load_bpf_object_file(const char *filename, int ifindex)
 	};
 	prog_load_attr.file = filename;
 
+	char* outer_map_names[] = {"test_cilium_lb6_maglev_outer", "test_cilium_lb4_maglev_outer"};
+	int num_outer_maps = 2;
 	/* Use libbpf for extracting BPF byte-code from BPF-ELF object, and
 	 * loading this into the kernel via bpf-syscall
 	 */
-	err = bpf_prog_load_xattr(&prog_load_attr, &obj, &first_prog_fd);
+	err = bpf_prog_load_xattr_w_inner_maps(&prog_load_attr, &obj, &first_prog_fd, outer_map_names, num_outer_maps);
 	if (err) {
 		fprintf(stderr, "ERR: loading BPF-OBJ file(%s) (%d): %s\n",
 			filename, err, strerror(-err));

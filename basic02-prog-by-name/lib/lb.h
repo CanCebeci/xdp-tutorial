@@ -71,8 +71,8 @@ struct bpf_map_def_legacy SEC("maps") LB6_MAGLEV_MAP_OUTER = {
   .type = BPF_MAP_TYPE_HASH_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
-  .max_entries = 1,//CILIUM_LB_MAP_MAX_ENTRIES,
-  .inner_map_idx = 0,
+  .max_entries = CILIUM_LB_MAP_MAX_ENTRIES,
+  //.inner_map_idx = 0,
   //.map_flags = CONDITIONAL_PREALLOC,
 };
 /* Maglev inner map definition */
@@ -141,10 +141,10 @@ struct bpf_map_def SEC("maps") LB4_HEALTH_MAP = {
 
 #if LB_SELECTION == LB_SELECTION_MAGLEV
 struct bpf_map_def SEC("maps") LB4_MAGLEV_MAP_OUTER = {
-  .type = BPF_MAP_TYPE_ARRAY_OF_MAPS,
+  .type = BPF_MAP_TYPE_HASH_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
-  .max_entries = CILIUM_LB_MAP_MAX_ENTRIES,
+  .max_entries = CILIUM_LB_MAP_MAX_ENTRIES, // should this be 1?
   //.map_flags = CONDITIONAL_PREALLOC,
 };
 /* Maglev inner map definition */
