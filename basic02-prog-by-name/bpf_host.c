@@ -969,7 +969,7 @@ handle_netdev(struct __ctx_buff *ctx, const bool from_host)
  * - the host firewall is enabled, or
  * - BPF NodePort is enabled
  */
-__section("from-netdev")
+__section("sk_skb_from-netdev")
 int from_netdev(struct __ctx_buff *ctx)
 {
 	__u32 __maybe_unused vlan_id;
@@ -994,7 +994,7 @@ int from_netdev(struct __ctx_buff *ctx)
  * from-host is attached as a tc egress filter to the node's 'cilium_host'
  * interface if present.
  */
-__section("from-host")
+__section("sk_skb_from-host")
 int from_host(struct __ctx_buff *ctx)
 {
 	/* Traffic from the host ns going through cilium_host device must
@@ -1010,7 +1010,7 @@ int from_host(struct __ctx_buff *ctx)
  * - the host firewall is enabled, or
  * - BPF NodePort is enabled
  */
-__section("to-netdev")
+__section("sk_skb_to-netdev")
 int to_netdev(struct __ctx_buff *ctx __maybe_unused)
 {
 	__u32 __maybe_unused src_id = 0;
@@ -1110,7 +1110,7 @@ out:
  * to-host is attached as a tc ingress filter to both the 'cilium_host' and
  * 'cilium_net' devices if present.
  */
-__section("to-host")
+__section("sk_skb_to-host")
 int to_host(struct __ctx_buff *ctx)
 {
 	__u32 magic = ctx_load_meta(ctx, ENCRYPT_OR_PROXY_MAGIC);
