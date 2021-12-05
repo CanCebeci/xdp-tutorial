@@ -5,9 +5,10 @@
 #define __BPF_SECTION__
 
 #include "compiler.h"
+#include "bpf_prog_type.h"
 
 #ifndef __section_tail
-# define __section_tail(ID, KEY)	__section("xdp_" __stringify(ID) "/" __stringify(KEY))
+# define __section_tail(ID, KEY)	__section(BPF_PROG_TYPE __stringify(ID) "/" __stringify(KEY))
 #endif
 
 #ifndef __section_license

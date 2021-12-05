@@ -96,6 +96,7 @@ static __always_inline __maybe_unused __u32
 ctx_load_meta(const struct __sk_buff *ctx, const __u32 off)
 {
 	return ctx->cb[off];
+	//return 0;
 }
 
 static __always_inline __maybe_unused __u32

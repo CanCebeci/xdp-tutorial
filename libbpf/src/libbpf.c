@@ -4061,8 +4061,9 @@ int bpf_object__load_xattr(struct bpf_object_load_attr *attr)
 	}
 
 	obj->loaded = true;
-
+	fprintf(stderr, "before create_maps\n");
 	CHECK_ERR(bpf_object__create_maps(obj), err, out);
+	fprintf(stderr, "after create_maps\n");
 	CHECK_ERR(bpf_object__relocate(obj, attr->target_btf_path), err, out);
 	CHECK_ERR(bpf_object__load_progs(obj, attr->log_level), err, out);
 
@@ -5392,7 +5393,9 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 	open_attr.file = attr->file;
 	open_attr.prog_type = attr->prog_type;
 
+	fprintf(stderr, "before __open_xattr\n");
 	obj = bpf_object__open_xattr(&open_attr);
+	fprintf(stderr, "after __open_xattr\n");
 	if (IS_ERR_OR_NULL(obj))
 		return -ENOENT;
 
@@ -5434,7 +5437,7 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 		bpf_object__close(obj);
 		return -ENOENT;
 	}
-
+	fprintf(stderr, "before loading inner maps\n");
 	// we need to load the inner maps first
 	for (int i = 0; i < num_outer_maps; i++) {
 		struct bpf_map *outer_map = bpf_object__find_map_by_name(obj, outer_map_names[i]);
@@ -5459,6 +5462,7 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 			return -1;
 		}
 	}
+	fprintf(stderr, "after loading inner maps\n");
 	
 	err = bpf_object__load(obj);
 	if (err) {
