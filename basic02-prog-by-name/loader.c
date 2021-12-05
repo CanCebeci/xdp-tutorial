@@ -77,13 +77,17 @@ struct bpf_object *__load_bpf_object_file(const char *filename, int ifindex)
 	prog_load_attr.file = filename;
 
 
-#define LOAD_BPF_HOST
+#define LOAD_BPF_NETWORK
 
 #ifdef LOAD_BPF_XDP
 	char* outer_map_names[] = {"test_cilium_lb6_maglev_outer", "test_cilium_lb4_maglev_outer"};
 	int num_outer_maps = 2;
 #endif
 #ifdef LOAD_BPF_HOST
+	char* outer_map_names[] = {};
+	int num_outer_maps = 0;
+#endif
+#ifdef LOAD_BPF_NETWORK
 	char* outer_map_names[] = {};
 	int num_outer_maps = 0;
 #endif

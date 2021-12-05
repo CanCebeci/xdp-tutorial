@@ -34,6 +34,9 @@ static __always_inline void update_metrics(__u64 bytes, __u8 direction,
 	entry = bpf_map_lookup_elem(&METRICS_MAP, &key);
 	if (entry) {
 		entry->count += 1;
+		// calm: math between pkt pointer and register with unbounded min value is not allowed
+		if (bytes < 8)
+			bytes = 8;
 		entry->bytes += bytes;
 	} else {
 		new_entry.count = 1;
