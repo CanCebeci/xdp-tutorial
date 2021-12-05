@@ -35,7 +35,7 @@ struct bpf_map_def SEC("maps") vip_map = {
   .value_size = sizeof(struct vip_meta),
   .max_entries = MAX_VIPS,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(vip_map, struct vip_definition, struct vip_meta);
 
@@ -47,7 +47,7 @@ struct bpf_map_def SEC("maps") lru_mapping = {
   .value_size = sizeof(__u32),
   .max_entries = MAX_SUPPORTED_CPUS,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 
 // fallback lru. we should never hit this one outside of unittests
@@ -57,7 +57,7 @@ struct bpf_map_def SEC("maps") fallback_cache = {
   .value_size = sizeof(struct real_pos_lru),
   .max_entries = DEFAULT_LRU_SIZE,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(fallback_cache, struct flow_key, struct real_pos_lru);
 
@@ -68,7 +68,7 @@ struct bpf_map_def SEC("maps") ch_rings = {
   .value_size = sizeof(__u32),
   .max_entries = CH_RINGS_SIZE,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(ch_rings, __u32, __u32);
 
@@ -79,7 +79,7 @@ struct bpf_map_def SEC("maps") reals = {
   .value_size = sizeof(struct real_definition),
   .max_entries = MAX_REALS,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(reals, __u32, struct real_definition);
 
@@ -90,7 +90,7 @@ struct bpf_map_def SEC("maps") reals_stats = {
   .value_size = sizeof(struct lb_stats),
   .max_entries = MAX_REALS,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(reals_stats, __u32, struct lb_stats);
 
@@ -101,7 +101,7 @@ struct bpf_map_def SEC("maps") stats = {
   .value_size = sizeof(struct lb_stats),
   .max_entries = STATS_MAP_SIZE,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(stats, __u32, struct lb_stats);
 
@@ -112,7 +112,7 @@ struct bpf_map_def SEC("maps") quic_mapping = {
   .value_size = sizeof(__u32),
   .max_entries = MAX_REALS,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(quic_mapping, __u32, __u32);
 
@@ -123,7 +123,7 @@ struct bpf_map_def SEC("maps") lpm_src_v4 = {
   .value_size = sizeof(__u32),
   .max_entries = MAX_LPM_SRC,
   .map_flags = BPF_F_NO_PREALLOC,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(lpm_src_v4, struct v4_lpm_key, __u32);
 
@@ -133,7 +133,7 @@ struct bpf_map_def SEC("maps") lpm_src_v6 = {
   .value_size = sizeof(__u32),
   .max_entries = MAX_LPM_SRC,
   .map_flags = BPF_F_NO_PREALLOC,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(lpm_src_v6, struct v6_lpm_key, __u32);
 

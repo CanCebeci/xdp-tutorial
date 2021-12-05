@@ -38,7 +38,7 @@ struct bpf_map_def SEC("maps") ctl_array = {
   .value_size = sizeof(struct ctl_value),
   .max_entries = CTL_MAP_SIZE,
   .map_flags = NO_FLAGS,
-  .map_id = -1,
+  //.map_id = -1,
 };
 BPF_ANNOTATE_KV_PAIR(ctl_array, __u32, struct ctl_value);
 
