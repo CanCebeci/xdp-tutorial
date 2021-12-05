@@ -1,0 +1,1 @@
+#define BPF_PROG_TYPE "sk_skb_"

@@ -47,7 +47,7 @@ endif
 
 HEADERS := bpf.h libbpf.h btf.h xsk.h libbpf_util.h \
 	   bpf_helpers.h bpf_helper_defs.h bpf_tracing.h \
-	   bpf_endian.h bpf_core_read.h
+	   bpf_endian.h bpf_core_read.h #bpf_map_helper_defs.h bpf_map_helper_defs_replay.h # katran seems to use these (defined in Rishabh's stub)
 UAPI_HEADERS := $(addprefix $(TOPDIR)/include/uapi/linux/,\
 			    bpf.h bpf_common.h btf.h)
 

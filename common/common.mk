@@ -56,7 +56,7 @@ BPF_CFLAGS += -Iinclude -I.
 BPF_CFLAGS += -DENABLE_IPV4=1 -DENABLE_IPV6=1 -DENABLE_IPSEC=1 -DIP_POOLS=1 -DHAVE_LPM_TRIE_MAP_TYPE -DHAVE_LRU_HASH_MAP_TYPE
 
 
-BPF_CFLAGS += -D__NR_CPUS__=128 -O2 -g -target bpf -std=gnu89 -emit-llvm -Wall -Werror -Wshadow -Wno-address-of-packed-member -Wno-unknown-warning-option -Wno-gnu-variable-sized-type-not-at-end -Wdeclaration-after-statement # -nostdinc -Wextra (complains about unused params)
+BPF_CFLAGS += -D__NR_CPUS__=128 -O2 -g -target bpf -emit-llvm -Wall -Werror -Wshadow -Wno-address-of-packed-member -Wno-unknown-warning-option -Wno-gnu-variable-sized-type-not-at-end # -Wdeclaration-after-statement -std=gnu89 -nostdinc -Wextra (last one complains about unused params)
 
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 
