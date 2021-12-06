@@ -5446,6 +5446,8 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 			pr_warn("Failed to find outer map\n");
 			return -1;
 		}
+#define HACK_FOR_KATRAN
+#ifdef HACK_FOR_CILIUM
 		int inner_map_fd = bpf_create_map(
 			BPF_MAP_TYPE_ARRAY, // type
 			sizeof(__u32), // key_size
@@ -5456,6 +5458,26 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 				//   .key_size = sizeof(__u32),
 				//   .value_size = sizeof(__u32) * LB_MAGLEV_LUT_SIZE,
 				//   .max_entries = 1,
+#endif
+#ifdef HACK_FOR_KATRAN
+/* My sincere apologies to whoever reads this code in the future - Can */
+#include "../../katran/balancer_structs.h"
+#include "../../katran/balancer_consts.h"
+		int inner_map_fd = bpf_create_map(
+			BPF_MAP_TYPE_LRU_HASH, // type
+			sizeof(struct flow_key), // key_size
+			sizeof(struct real_pos_lru), // value_size 
+			DEFAULT_LRU_SIZE, // max_entries
+			NO_FLAGS); // flag
+
+				// should be the same as katran's fallback_cache
+				//   .type = BPF_MAP_TYPE_LRU_HASH,
+				//   .key_size = sizeof(struct flow_key),
+				//   .value_size = sizeof(struct real_pos_lru),
+				//   .max_entries = DEFAULT_LRU_SIZE,
+				//   .map_flags = NO_FLAGS,
+#endif 
+
 		if (bpf_map__set_inner_map_fd(outer_map, inner_map_fd) != 0) {
 			//close(inner_map_fd);
 			pr_warn("Failed to set inner map fd\n");

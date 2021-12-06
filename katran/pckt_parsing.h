@@ -31,6 +31,7 @@
 #include <linux/udp.h>
 #include <linux/if_ether.h>
 #include <linux/ptrace.h>
+#include <linux/version.h>
 #include <stdbool.h>
 
 #include "balancer_consts.h"
@@ -54,15 +55,9 @@ struct quic_short_header {
   __u8 connection_id[QUIC_MIN_CONNID_LEN];
 } __attribute__((__packed__));
 
-struct eth_hdr {
-  unsigned char eth_dest[ETH_ALEN];
-  unsigned char eth_source[ETH_ALEN];
-  unsigned short  eth_proto;
-};
-
 __attribute__((__always_inline__))
 static inline __u64 calc_offset(bool is_ipv6, bool is_icmp) {
-  __u64 off = sizeof(struct eth_hdr);
+  __u64 off = sizeof(struct ethhdr);
   if (is_ipv6) {
     off += sizeof(struct ipv6hdr);
     if (is_icmp) {
@@ -179,8 +174,6 @@ static inline int parse_quic(void *data, void *data_end,
   if (!connId) {
     return FURTHER_PROCESSING;
   }
-  return CONCRETE_QUIC_REAL_ID; /* Hack to avoid reasoning about two bit long vectors */
-
   // connId schema: if first two bits contain the right version info
   __u8 connIdVersion = (connId[0] >> 6);
   if (connIdVersion == QUIC_CONNID_VERSION_V1) {
