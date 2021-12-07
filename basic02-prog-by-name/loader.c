@@ -55,7 +55,7 @@ static const char *__doc__ = "XDP loader\n"
 // };
 static struct bpf_progs_desc progs[] = {
 	// can have type 1,3,4,8,10,11,12,19
-	{"from-network", BPF_PROG_TYPE_CGROUP_SKB, NULL},
+	{"from-network", BPF_PROG_TYPE_SCHED_CLS, NULL},
 };
 static int prog_count = 1;
 #endif
