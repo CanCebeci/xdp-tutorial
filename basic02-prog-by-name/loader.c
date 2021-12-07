@@ -20,10 +20,8 @@ static const char *__doc__ = "XDP loader\n"
 #include "../common/common_user_bpf_xdp.h"
 
 
-#define LOAD_BPF_NETWORK
+#define LOAD_BPF_SOCK
 #define PIN_PROGS
-
-#ifdef LOAD_BPF_NETWORK
 
 // enum bpf_prog_type all_types[] = {
 // 		BPF_PROG_TYPE_UNSPEC,			( 0 )
@@ -53,9 +51,51 @@ static const char *__doc__ = "XDP loader\n"
 // 		BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE,
 // 		BPF_PROG_TYPE_CGROUP_SOCKOPT,
 // };
+
+#ifdef LOAD_BPF_NETWORK
 static struct bpf_progs_desc progs[] = {
 	// can have type 1,3,4,8,10,11,12,19
 	{"from-network", BPF_PROG_TYPE_SCHED_CLS, NULL},
+};
+static int prog_count = 1;
+#endif
+#ifdef LOAD_BPF_HOST
+static struct bpf_progs_desc progs[] = {
+	{"2/1", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/5", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/4", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/21", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/16", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/18", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/24", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/20", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/15", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/17", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/19", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/23", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/10", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/22", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/7", BPF_PROG_TYPE_SCHED_CLS, NULL},
+
+	{"from-netdev", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"from-host", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"to-netdev", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"to-host", BPF_PROG_TYPE_SCHED_CLS, NULL},
+};
+static int prog_count = 19;
+#endif
+#ifdef LOAD_BPF_SOCK
+static struct bpf_progs_desc progs[] = {
+	{"cgroup/getpeername6", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/post_bind4", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/sendmsg4", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/recvmsg4", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/getpeername4", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/post_bind6", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/connect6", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/sendmsg6", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/recvmsg6", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"cgroup/getpeername6", BPF_PROG_TYPE_SCHED_CLS, NULL},
 };
 static int prog_count = 1;
 #endif
@@ -120,15 +160,11 @@ struct bpf_object *__load_bpf_object_file(const char *filename, int ifindex)
 	prog_load_attr.file = filename;
 
 
-#ifdef LOAD_BPF_XDP
+#if defined(LOAD_BPF_XDP) || defined(LOAD_BPF_SOCK)
 	char* outer_map_names[] = {"test_cilium_lb6_maglev_outer", "test_cilium_lb4_maglev_outer"};
 	int num_outer_maps = 2;
 #endif
-#ifdef LOAD_BPF_HOST
-	char* outer_map_names[] = {};
-	int num_outer_maps = 0;
-#endif
-#ifdef LOAD_BPF_NETWORK
+#if defined(LOAD_BPF_HOST) || defined(LOAD_BPF_NETWORK)
 	char* outer_map_names[] = {};
 	int num_outer_maps = 0;
 #endif

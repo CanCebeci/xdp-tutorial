@@ -67,7 +67,7 @@ struct bpf_map_def SEC("maps") LB6_HEALTH_MAP = {
 #endif
 
 #if LB_SELECTION == LB_SELECTION_MAGLEV
-struct bpf_map_def_legacy SEC("maps") LB6_MAGLEV_MAP_OUTER = {
+struct bpf_map_def SEC("maps") LB6_MAGLEV_MAP_OUTER = {
   .type = BPF_MAP_TYPE_HASH_OF_MAPS,
   .key_size = sizeof(__u16),
   .value_size = sizeof(__u32),
