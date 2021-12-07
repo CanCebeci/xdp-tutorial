@@ -1,1 +1,1 @@
-#define BPF_PROG_TYPE "sk_skb_"
+#define BPF_PROG_TYPE ""

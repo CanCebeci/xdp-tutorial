@@ -1767,12 +1767,15 @@ struct bpf_program *
 bpf_object__find_program_by_title(const struct bpf_object *obj,
 				  const char *title)
 {
+	fprintf(stderr, "callled foreachproogggg\n\n");
 	struct bpf_program *pos;
 
 	bpf_object__for_each_program(pos, obj) {
+		fprintf(stderr, "in for_each_prog\n");
 		if (pos->section_name && !strcmp(pos->section_name, title))
 			return pos;
 	}
+	fprintf(stderr, "out for_each_prog\n");
 	return NULL;
 }
 
@@ -4747,6 +4750,7 @@ bpf_program__next(struct bpf_program *prev, const struct bpf_object *obj)
 	struct bpf_program *prog = prev;
 
 	do {
+		fprintf(stderr, "bpf_program__next iter\n");
 		prog = __bpf_program__iter(prog, obj, true);
 	} while (prog && bpf_program__is_function_storage(prog, obj));
 
@@ -5376,8 +5380,10 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
 	return 0;
 }
 
+
 int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
-			struct bpf_object **pobj, int *prog_fd, char *outer_map_names[], int num_outer_maps)
+			struct bpf_object **pobj, int *prog_fd, char *outer_map_names[], int num_outer_maps,
+			struct bpf_progs_desc *progs, int prog_count)
 {
 	struct bpf_object_open_attr open_attr = {};
 	struct bpf_program *prog, *first_prog = NULL;
@@ -5437,7 +5443,17 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 		bpf_object__close(obj);
 		return -ENOENT;
 	}
-	fprintf(stderr, "before loading inner maps\n");
+
+	// Set program types manually. libbpf can not do this properly for some reason
+	for (int i = 0; i < prog_count; i++) {
+		progs[i].prog = bpf_object__find_program_by_title(obj, progs[i].name);
+		if (!progs[i].prog) {
+			fprintf(stderr, "Error: bpf_object__find_program_by_title failed\n");
+			return 1;
+		}
+		bpf_program__set_type(progs[i].prog, progs[i].type);
+	}
+
 	// we need to load the inner maps first
 	for (int i = 0; i < num_outer_maps; i++) {
 		struct bpf_map *outer_map = bpf_object__find_map_by_name(obj, outer_map_names[i]);

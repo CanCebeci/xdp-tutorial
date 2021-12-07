@@ -25,6 +25,14 @@ extern "C" {
 #define LIBBPF_API __attribute__((visibility("default")))
 #endif
 
+// CAN: adapted from bmc's loader.
+struct bpf_progs_desc {
+	char name[256];
+	enum bpf_prog_type type;
+	struct bpf_program *prog;
+};
+
+
 enum libbpf_errno {
 	__LIBBPF_ERRNO__START = 4000,
 
@@ -428,7 +436,8 @@ struct bpf_prog_load_attr {
 LIBBPF_API int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
 				   struct bpf_object **pobj, int *prog_fd);
 LIBBPF_API int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
-			struct bpf_object **pobj, int *prog_fd, char *outer_map_names[], int num_outer_maps);
+			struct bpf_object **pobj, int *prog_fd, char *outer_map_names[], int num_outer_maps,
+			struct bpf_progs_desc * progs, int prog_count);
 LIBBPF_API int bpf_prog_load(const char *file, enum bpf_prog_type type,
 			     struct bpf_object **pobj, int *prog_fd);
 

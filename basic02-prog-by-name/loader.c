@@ -19,8 +19,51 @@ static const char *__doc__ = "XDP loader\n"
 #include "../common/common_params.h"
 #include "../common/common_user_bpf_xdp.h"
 
-static const char *default_filename = "xdp_prog_kern.o";
-static const char *default_progsec = "xdp_pass";
+
+#define LOAD_BPF_NETWORK
+#define PIN_PROGS
+
+#ifdef LOAD_BPF_NETWORK
+
+// enum bpf_prog_type all_types[] = {
+// 		BPF_PROG_TYPE_UNSPEC,			( 0 )
+// 		BPF_PROG_TYPE_SOCKET_FILTER,    ( 1 ) 
+// 		BPF_PROG_TYPE_KPROBE,			( ... )
+// 		BPF_PROG_TYPE_SCHED_CLS,
+// 		BPF_PROG_TYPE_SCHED_ACT,
+// 		BPF_PROG_TYPE_TRACEPOINT,
+// 		BPF_PROG_TYPE_XDP,
+// 		BPF_PROG_TYPE_PERF_EVENT,
+// 		BPF_PROG_TYPE_CGROUP_SKB,
+// 		BPF_PROG_TYPE_CGROUP_SOCK,
+// 		BPF_PROG_TYPE_LWT_IN,			( 10 )
+// 		BPF_PROG_TYPE_LWT_OUT,
+// 		BPF_PROG_TYPE_LWT_XMIT,
+// 		BPF_PROG_TYPE_SOCK_OPS,
+// 		BPF_PROG_TYPE_SK_SKB,
+// 		BPF_PROG_TYPE_CGROUP_DEVICE,
+// 		BPF_PROG_TYPE_SK_MSG,
+// 		BPF_PROG_TYPE_RAW_TRACEPOINT,
+// 		BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
+// 		BPF_PROG_TYPE_LWT_SEG6LOCAL,
+// 		BPF_PROG_TYPE_LIRC_MODE2,		( 20 )
+// 		BPF_PROG_TYPE_SK_REUSEPORT,
+// 		BPF_PROG_TYPE_FLOW_DISSECTOR,
+// 		BPF_PROG_TYPE_CGROUP_SYSCTL,
+// 		BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE,
+// 		BPF_PROG_TYPE_CGROUP_SOCKOPT,
+// };
+static struct bpf_progs_desc progs[] = {
+	// can have type 1,3,4,8,10,11,12,19
+	{"from-network", BPF_PROG_TYPE_CGROUP_SKB, NULL},
+};
+static int prog_count = 1;
+#endif
+
+
+
+static const char *default_filename = "xdp_prog_kern.o";  // unused
+static const char *default_progsec = "xdp_pass";  // unused
 
 static const struct option_wrapper long_options[] = {
 	{{"help",        no_argument,		NULL, 'h' },
@@ -77,8 +120,6 @@ struct bpf_object *__load_bpf_object_file(const char *filename, int ifindex)
 	prog_load_attr.file = filename;
 
 
-#define LOAD_BPF_NETWORK
-
 #ifdef LOAD_BPF_XDP
 	char* outer_map_names[] = {"test_cilium_lb6_maglev_outer", "test_cilium_lb4_maglev_outer"};
 	int num_outer_maps = 2;
@@ -95,7 +136,7 @@ struct bpf_object *__load_bpf_object_file(const char *filename, int ifindex)
 	/* Use libbpf for extracting BPF byte-code from BPF-ELF object, and
 	 * loading this into the kernel via bpf-syscall
 	 */
-	err = bpf_prog_load_xattr_w_inner_maps(&prog_load_attr, &obj, &first_prog_fd, outer_map_names, num_outer_maps);
+	err = bpf_prog_load_xattr_w_inner_maps(&prog_load_attr, &obj, &first_prog_fd, outer_map_names, num_outer_maps, progs, prog_count);
 	if (err) {
 		fprintf(stderr, "ERR: loading BPF-OBJ file(%s) (%d): %s\n",
 			filename, err, strerror(-err));
@@ -148,13 +189,62 @@ struct bpf_object *__load_bpf_and_xdp_attach(struct config *cfg)
 		exit(EXIT_FAIL_BPF);
 	}
 
+#ifdef PIN_PROGS
+#define PATH_MAX 4096
+#define BPF_SYSFS_ROOT "/sys/fs/bpf"
+	char filename[PATH_MAX];
+	for (int i = 0; i < prog_count; i++) {
+
+		int len = snprintf(filename, PATH_MAX, "%s/%s", BPF_SYSFS_ROOT, progs[i].name);
+		if (len < 0) {
+			fprintf(stderr, "Error: Program name '%s' is invalid\n", progs[i].name);
+			return NULL;
+		} else if (len >= PATH_MAX) {
+			fprintf(stderr, "Error: Program name '%s' is too long\n", progs[i].name);
+			return NULL;
+		}
+retry:
+		if (bpf_program__pin_instance(progs[i].prog, filename, 0)) {
+			fprintf(stderr, "Error: Failed to pin program '%s' to path %s\n", progs[i].name, filename);
+			if (errno == EEXIST) {
+				fprintf(stdout, "BPF program '%s' already pinned, unpinning it to reload it\n", progs[i].name);
+				if (bpf_program__unpin_instance(progs[i].prog, filename, 0)) {
+					fprintf(stderr, "Error: Fail to unpin program '%s' at %s\n", progs[i].name, filename);
+					return NULL;
+				}
+				goto retry;
+			}
+			return NULL;
+		}
+		
+	}
+#endif
+
+#ifdef ATTACH_TO_XDP_HOOK
 	/* At this point: BPF-progs are (only) loaded by the kernel, and prog_fd
 	 * is our select file-descriptor handle. Next step is attaching this FD
 	 * to a kernel hook point, in this case XDP net_device link-level hook.
 	 */
 	err = xdp_link_attach(cfg->ifindex, cfg->xdp_flags, prog_fd);
-	if (err)
+	if (err) {
+		fprintf(stderr, "ERR: xdp_link_attach failed\n");
 		exit(err);
+	}
+#else
+	/* To attach a pinned program manually, use one of the following:
+	 * 
+	 * tc qdisc add dev <interface_name> clsact
+	 * sudo tc filter add dev <interface_name> {ingress/egress} bpf object-pinned /sys/fs/bpf/<prog_name>		(for tc programs)
+	 * 
+	 * sudo ip link set dev <interface_name> xdpgeneric pinned /sys/fs/bpf/<prog_name>							(for xdp programs, have to check again if this was the exact command)
+	 * 
+	 * To list attached programs:
+	 * tc -s -d filter show dev <interface_name> {ingress/egress}
+	 * ip link show dev <interface_name>
+	 */
+	fprintf(stderr, "Not attaching to an XDP hook, done.\n");
+	exit(0);
+#endif
 
 	return bpf_obj;
 }

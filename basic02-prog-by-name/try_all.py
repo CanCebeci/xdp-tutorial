@@ -8,4 +8,4 @@ for t in types.split():
     f.close()
     os.system("make clean")
     os.system("make")
-    os.system("sudo ./loader --dev veth-basic02 --force  --filename bpf_host.o --progsec {t}_from-netdev")
+    os.system("sudo ./loader --dev veth-basic02 --force  --filename bpf_network.o --progsec {t}_from-network")
