@@ -52,6 +52,34 @@ static const char *__doc__ = "XDP loader\n"
 // 		BPF_PROG_TYPE_CGROUP_SOCKOPT,
 // };
 
+// enum bpf_attach_type all_attaches[] ={
+// 		BPF_CGROUP_INET_INGRESS,		( 0 )
+// 		BPF_CGROUP_INET_EGRESS,
+// 		BPF_CGROUP_INET_SOCK_CREATE,
+// 		BPF_CGROUP_SOCK_OPS,
+// 		BPF_SK_SKB_STREAM_PARSER,
+// 		BPF_SK_SKB_STREAM_VERDICT,
+// 		BPF_CGROUP_DEVICE,
+// 		BPF_SK_MSG_VERDICT,
+// 		BPF_CGROUP_INET4_BIND,
+// 		BPF_CGROUP_INET6_BIND,
+// 		BPF_CGROUP_INET4_CONNECT,		( 10 )
+// 		BPF_CGROUP_INET6_CONNECT,
+// 		BPF_CGROUP_INET4_POST_BIND,
+// 		BPF_CGROUP_INET6_POST_BIND,
+// 		BPF_CGROUP_UDP4_SENDMSG,
+// 		BPF_CGROUP_UDP6_SENDMSG,
+// 		BPF_LIRC_MODE2,
+// 		BPF_FLOW_DISSECTOR,
+// 		BPF_CGROUP_SYSCTL,
+// 		BPF_CGROUP_UDP4_RECVMSG,		( 20 )
+// 		BPF_CGROUP_UDP6_RECVMSG,
+// 		BPF_CGROUP_GETSOCKOPT,
+// 		BPF_CGROUP_SETSOCKOPT,
+// 		__MAX_BPF_ATTACH_TYPE
+// };
+
+
 #ifdef LOAD_BPF_NETWORK
 static struct bpf_progs_desc progs[] = {
 	// can have type 1,3,4,8,10,11,12,19
@@ -86,7 +114,18 @@ static int prog_count = 19;
 #endif
 #ifdef LOAD_BPF_SOCK
 static struct bpf_progs_desc progs[] = {
-	{"cgroup/getpeername6", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"secname1", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET4_CONNECT, NULL}, // !
+	{"secname2", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_POST_BIND, NULL},			// this will not load with type BPF_PROG_TYPE_CGROUP_SOCK (what its original name suggests) // !
+	{"secname4", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET4_CONNECT, NULL},  	// this will not load with attach BPF_CGROUP_UDP4_RECVMSG (what its original name suggests). // !
+	{"secname5", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET4_CONNECT, NULL},  	// this will not load with attach BPF_CGROUP_UDP4_RECVMSG (what its original name suggests). // !
+	{"secname6", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET4_CONNECT, NULL},  	// this will not load with attach BPF_CGROUP_UDP4_RECVMSG (what its original name suggests). // !
+	{"secname7", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET6_POST_BIND, NULL},			// this will not load with type BPF_PROG_TYPE_CGROUP_SOCK (what its original name suggests) // !
+	{"secname9", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET6_CONNECT, NULL},	// !
+	{"secname10", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_UDP6_SENDMSG, NULL},
+	{"secname11", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET6_CONNECT, NULL},	// this will not load with attach BPF_CGROUP_UDP6_RECVMSG (what its original name suggests). // !
+	{"secname12",  BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET6_CONNECT, NULL},
+
+	// {"cgroup/getpeername6", BPF_PROG_TYPE_SCHED_CLS, NULL},
 	// {"cgroup/post_bind4", BPF_PROG_TYPE_SCHED_CLS, NULL},
 	// {"cgroup/sendmsg4", BPF_PROG_TYPE_SCHED_CLS, NULL},
 	// {"cgroup/recvmsg4", BPF_PROG_TYPE_SCHED_CLS, NULL},
@@ -97,7 +136,7 @@ static struct bpf_progs_desc progs[] = {
 	// {"cgroup/recvmsg6", BPF_PROG_TYPE_SCHED_CLS, NULL},
 	// {"cgroup/getpeername6", BPF_PROG_TYPE_SCHED_CLS, NULL},
 };
-static int prog_count = 1;
+static int prog_count = 10;
 #endif
 
 

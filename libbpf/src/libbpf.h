@@ -29,6 +29,7 @@ extern "C" {
 struct bpf_progs_desc {
 	char name[256];
 	enum bpf_prog_type type;
+	enum bpf_attach_type attach;
 	struct bpf_program *prog;
 };
 

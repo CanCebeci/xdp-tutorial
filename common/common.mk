@@ -41,6 +41,7 @@ KERN_USER_H ?= $(wildcard common_kern_user.h)
 
 CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -g
 CFLAGS += -I../headers/
+CFLAGS += -Wno-unused-function -Wno-unused-variable
 LDFLAGS ?= -L$(LIBBPF_DIR)
 
 BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/

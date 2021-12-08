@@ -1767,15 +1767,12 @@ struct bpf_program *
 bpf_object__find_program_by_title(const struct bpf_object *obj,
 				  const char *title)
 {
-	fprintf(stderr, "callled foreachproogggg\n\n");
 	struct bpf_program *pos;
 
 	bpf_object__for_each_program(pos, obj) {
-		fprintf(stderr, "in for_each_prog\n");
 		if (pos->section_name && !strcmp(pos->section_name, title))
 			return pos;
 	}
-	fprintf(stderr, "out for_each_prog\n");
 	return NULL;
 }
 
@@ -3883,14 +3880,14 @@ bpf_object__load_progs(struct bpf_object *obj, int log_level)
 	return 0;
 }
 
-static int libbpf_attach_btf_id_by_name(const char *name, __u32 *btf_id);
+//static int libbpf_attach_btf_id_by_name(const char *name, __u32 *btf_id);
 
 static struct bpf_object *
 __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
 		   struct bpf_object_open_opts *opts)
 {
 	const char *pin_root_path;
-	struct bpf_program *prog;
+	//struct bpf_program *prog;
 	struct bpf_object *obj;
 	const char *obj_name;
 	char tmp_name[64];
@@ -3934,28 +3931,30 @@ __bpf_object__open(const char *path, const void *obj_buf, size_t obj_buf_sz,
 	CHECK_ERR(bpf_object__collect_reloc(obj), err, out);
 	bpf_object__elf_finish(obj);
 
-	bpf_object__for_each_program(prog, obj) {
-		enum bpf_prog_type prog_type;
-		enum bpf_attach_type attach_type;
-		__u32 btf_id;
+	// This automatic inference just complicates stuff
 
-		err = libbpf_prog_type_by_name(prog->section_name, &prog_type,
-					       &attach_type);
-		if (err == -ESRCH)
-			/* couldn't guess, but user might manually specify */
-			continue;
-		if (err)
-			goto out;
+	// bpf_object__for_each_program(prog, obj) {
+	// 	enum bpf_prog_type prog_type;
+	// 	enum bpf_attach_type attach_type;
+	// 	__u32 btf_id;
 
-		bpf_program__set_type(prog, prog_type);
-		bpf_program__set_expected_attach_type(prog, attach_type);
-		if (prog_type == BPF_PROG_TYPE_TRACING) {
-			err = libbpf_attach_btf_id_by_name(prog->section_name, &btf_id);
-			if (err)
-				goto out;
-			prog->attach_btf_id = btf_id;
-		}
-	}
+	// 	err = libbpf_prog_type_by_name(prog->section_name, &prog_type,
+	// 				       &attach_type);
+	// 	if (err == -ESRCH)
+	// 		/* couldn't guess, but user might manually specify */
+	// 		continue;
+	// 	if (err)
+	// 		goto out;
+
+	// 	bpf_program__set_type(prog, prog_type);
+	// 	bpf_program__set_expected_attach_type(prog, attach_type);
+	// 	if (prog_type == BPF_PROG_TYPE_TRACING) {
+	// 		err = libbpf_attach_btf_id_by_name(prog->section_name, &btf_id);
+	// 		if (err)
+	// 			goto out;
+	// 		prog->attach_btf_id = btf_id;
+	// 	}
+	// }
 
 	return obj;
 out:
@@ -4750,7 +4749,6 @@ bpf_program__next(struct bpf_program *prev, const struct bpf_object *obj)
 	struct bpf_program *prog = prev;
 
 	do {
-		fprintf(stderr, "bpf_program__next iter\n");
 		prog = __bpf_program__iter(prog, obj, true);
 	} while (prog && bpf_program__is_function_storage(prog, obj));
 
@@ -5081,44 +5079,44 @@ int libbpf_prog_type_by_name(const char *name, enum bpf_prog_type *prog_type,
 }
 
 #define BTF_PREFIX "btf_trace_"
-static int libbpf_attach_btf_id_by_name(const char *name, __u32 *btf_id)
-{
-	struct btf *btf = bpf_core_find_kernel_btf();
-	char raw_tp_btf_name[128] = BTF_PREFIX;
-	char *dst = raw_tp_btf_name + sizeof(BTF_PREFIX) - 1;
-	int ret, i, err = -EINVAL;
+// static int libbpf_attach_btf_id_by_name(const char *name, __u32 *btf_id)
+// {
+// 	struct btf *btf = bpf_core_find_kernel_btf();
+// 	char raw_tp_btf_name[128] = BTF_PREFIX;
+// 	char *dst = raw_tp_btf_name + sizeof(BTF_PREFIX) - 1;
+// 	int ret, i, err = -EINVAL;
 
-	if (IS_ERR(btf)) {
-		pr_warn("vmlinux BTF is not found\n");
-		return -EINVAL;
-	}
+// 	if (IS_ERR(btf)) {
+// 		pr_warn("vmlinux BTF is not found\n");
+// 		return -EINVAL;
+// 	}
 
-	if (!name)
-		goto out;
+// 	if (!name)
+// 		goto out;
 
-	for (i = 0; i < ARRAY_SIZE(section_names); i++) {
-		if (!section_names[i].is_attach_btf)
-			continue;
-		if (strncmp(name, section_names[i].sec, section_names[i].len))
-			continue;
-		/* prepend "btf_trace_" prefix per kernel convention */
-		strncat(dst, name + section_names[i].len,
-			sizeof(raw_tp_btf_name) - sizeof(BTF_PREFIX));
-		ret = btf__find_by_name(btf, raw_tp_btf_name);
-		if (ret <= 0) {
-			pr_warn("%s is not found in vmlinux BTF\n", dst);
-			goto out;
-		}
-		*btf_id = ret;
-		err = 0;
-		goto out;
-	}
-	pr_warn("failed to identify btf_id based on ELF section name '%s'\n", name);
-	err = -ESRCH;
-out:
-	btf__free(btf);
-	return err;
-}
+// 	for (i = 0; i < ARRAY_SIZE(section_names); i++) {
+// 		if (!section_names[i].is_attach_btf)
+// 			continue;
+// 		if (strncmp(name, section_names[i].sec, section_names[i].len))
+// 			continue;
+// 		/* prepend "btf_trace_" prefix per kernel convention */
+// 		strncat(dst, name + section_names[i].len,
+// 			sizeof(raw_tp_btf_name) - sizeof(BTF_PREFIX));
+// 		ret = btf__find_by_name(btf, raw_tp_btf_name);
+// 		if (ret <= 0) {
+// 			pr_warn("%s is not found in vmlinux BTF\n", dst);
+// 			goto out;
+// 		}
+// 		*btf_id = ret;
+// 		err = 0;
+// 		goto out;
+// 	}
+// 	pr_warn("failed to identify btf_id based on ELF section name '%s'\n", name);
+// 	err = -ESRCH;
+// out:
+// 	btf__free(btf);
+// 	return err;
+// }
 
 int libbpf_attach_type_by_name(const char *name,
 			       enum bpf_attach_type *attach_type)
@@ -5399,9 +5397,7 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 	open_attr.file = attr->file;
 	open_attr.prog_type = attr->prog_type;
 
-	fprintf(stderr, "before __open_xattr\n");
 	obj = bpf_object__open_xattr(&open_attr);
-	fprintf(stderr, "after __open_xattr\n");
 	if (IS_ERR_OR_NULL(obj))
 		return -ENOENT;
 
@@ -5452,6 +5448,9 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 			return 1;
 		}
 		bpf_program__set_type(progs[i].prog, progs[i].type);
+		printf("type set for %s:\t%i\n", progs[i].name, progs[i].type);
+		bpf_program__set_expected_attach_type(progs[i].prog, progs[i].attach);
+		printf("attach set for %s:\t%i\n", progs[i].name, progs[i].attach);
 	}
 
 	// we need to load the inner maps first
@@ -5500,7 +5499,6 @@ int bpf_prog_load_xattr_w_inner_maps(const struct bpf_prog_load_attr *attr,
 			return -1;
 		}
 	}
-	fprintf(stderr, "after loading inner maps\n");
 	
 	err = bpf_object__load(obj);
 	if (err) {
