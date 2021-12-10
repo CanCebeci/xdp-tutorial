@@ -8,7 +8,7 @@ static const char *__doc__ = "XDP loader\n"
 #include <string.h>
 #include <errno.h>
 #include <getopt.h>
-#include <sys/resource.h> // CAN
+#include <sys/resource.h>
 
 #include <bpf/bpf.h>
 #include <bpf/libbpf.h>
@@ -20,13 +20,13 @@ static const char *__doc__ = "XDP loader\n"
 #include "../common/common_user_bpf_xdp.h"
 
 
-#define LOAD_BPF_SOCK
+#define LOAD_BPF_HOST
 #define PIN_PROGS
 
 // enum bpf_prog_type all_types[] = {
-// 		BPF_PROG_TYPE_UNSPEC,			( 0 )
-// 		BPF_PROG_TYPE_SOCKET_FILTER,    ( 1 ) 
-// 		BPF_PROG_TYPE_KPROBE,			( ... )
+// 		BPF_PROG_TYPE_UNSPEC,			//( 0 )
+// 		BPF_PROG_TYPE_SOCKET_FILTER,    //( 1 ) 
+// 		BPF_PROG_TYPE_KPROBE,			//( ... )
 // 		BPF_PROG_TYPE_SCHED_CLS,
 // 		BPF_PROG_TYPE_SCHED_ACT,
 // 		BPF_PROG_TYPE_TRACEPOINT,
@@ -34,7 +34,7 @@ static const char *__doc__ = "XDP loader\n"
 // 		BPF_PROG_TYPE_PERF_EVENT,
 // 		BPF_PROG_TYPE_CGROUP_SKB,
 // 		BPF_PROG_TYPE_CGROUP_SOCK,
-// 		BPF_PROG_TYPE_LWT_IN,			( 10 )
+// 		BPF_PROG_TYPE_LWT_IN,			//( 10 )
 // 		BPF_PROG_TYPE_LWT_OUT,
 // 		BPF_PROG_TYPE_LWT_XMIT,
 // 		BPF_PROG_TYPE_SOCK_OPS,
@@ -44,7 +44,7 @@ static const char *__doc__ = "XDP loader\n"
 // 		BPF_PROG_TYPE_RAW_TRACEPOINT,
 // 		BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
 // 		BPF_PROG_TYPE_LWT_SEG6LOCAL,
-// 		BPF_PROG_TYPE_LIRC_MODE2,		( 20 )
+// 		BPF_PROG_TYPE_LIRC_MODE2,		//( 20 )
 // 		BPF_PROG_TYPE_SK_REUSEPORT,
 // 		BPF_PROG_TYPE_FLOW_DISSECTOR,
 // 		BPF_PROG_TYPE_CGROUP_SYSCTL,
@@ -53,7 +53,7 @@ static const char *__doc__ = "XDP loader\n"
 // };
 
 // enum bpf_attach_type all_attaches[] ={
-// 		BPF_CGROUP_INET_INGRESS,		( 0 )
+// 		BPF_CGROUP_INET_INGRESS,		//( 0 )
 // 		BPF_CGROUP_INET_EGRESS,
 // 		BPF_CGROUP_INET_SOCK_CREATE,
 // 		BPF_CGROUP_SOCK_OPS,
@@ -63,7 +63,7 @@ static const char *__doc__ = "XDP loader\n"
 // 		BPF_SK_MSG_VERDICT,
 // 		BPF_CGROUP_INET4_BIND,
 // 		BPF_CGROUP_INET6_BIND,
-// 		BPF_CGROUP_INET4_CONNECT,		( 10 )
+// 		BPF_CGROUP_INET4_CONNECT,		//( 10 )
 // 		BPF_CGROUP_INET6_CONNECT,
 // 		BPF_CGROUP_INET4_POST_BIND,
 // 		BPF_CGROUP_INET6_POST_BIND,
@@ -72,7 +72,7 @@ static const char *__doc__ = "XDP loader\n"
 // 		BPF_LIRC_MODE2,
 // 		BPF_FLOW_DISSECTOR,
 // 		BPF_CGROUP_SYSCTL,
-// 		BPF_CGROUP_UDP4_RECVMSG,		( 20 )
+// 		BPF_CGROUP_UDP4_RECVMSG,		//( 20 )
 // 		BPF_CGROUP_UDP6_RECVMSG,
 // 		BPF_CGROUP_GETSOCKOPT,
 // 		BPF_CGROUP_SETSOCKOPT,
@@ -89,28 +89,28 @@ static int prog_count = 1;
 #endif
 #ifdef LOAD_BPF_HOST
 static struct bpf_progs_desc progs[] = {
-	{"2/1", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/5", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/4", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/21", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/16", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/18", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/24", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/20", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/15", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/17", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/19", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/23", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/10", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/22", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"2/7", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"2/1", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	// {"2/5", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	// {"2/4", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/21", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	//{"2/16", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/18", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/24", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/20", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/15", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/17", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/19", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/23", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/10", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/22", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
+	{"2/7", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
 
-	{"from-netdev", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"from-host", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"to-netdev", BPF_PROG_TYPE_SCHED_CLS, NULL},
-	{"to-host", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"from-netdev", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	// {"from-host", BPF_PROG_TYPE_SCHED_CLS, NULL},
+	{"to-netdev", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},		// ! this is the only crucial one
+	// {"to-host", BPF_PROG_TYPE_SCHED_CLS, BPF_CGROUP_INET4_CONNECT, NULL},
 };
-static int prog_count = 19;
+static int prog_count = 13;
 #endif
 #ifdef LOAD_BPF_SOCK
 static struct bpf_progs_desc progs[] = {
@@ -137,6 +137,12 @@ static struct bpf_progs_desc progs[] = {
 	// {"cgroup/getpeername6", BPF_PROG_TYPE_SCHED_CLS, NULL},
 };
 static int prog_count = 10;
+#endif
+#ifdef LOAD_BPF_LXC
+static struct bpf_progs_desc progs[] = {
+	
+};
+static int prog_count = 0;
 #endif
 
 
@@ -203,7 +209,7 @@ struct bpf_object *__load_bpf_object_file(const char *filename, int ifindex)
 	char* outer_map_names[] = {"test_cilium_lb6_maglev_outer", "test_cilium_lb4_maglev_outer"};
 	int num_outer_maps = 2;
 #endif
-#if defined(LOAD_BPF_HOST) || defined(LOAD_BPF_NETWORK)
+#if defined(LOAD_BPF_HOST) || defined(LOAD_BPF_NETWORK) || defined(LOAD_BPF_LXC)
 	char* outer_map_names[] = {};
 	int num_outer_maps = 0;
 #endif

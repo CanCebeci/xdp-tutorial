@@ -331,6 +331,7 @@ static __always_inline int __icmp6_send_time_exceeded(struct __ctx_buff *ctx,
 __section_tail(CILIUM_MAP_CALLS, CILIUM_CALL_SEND_ICMP6_TIME_EXCEEDED)
 int tail_icmp6_send_time_exceeded(struct __ctx_buff *ctx __maybe_unused)
 {
+	return 0;
 # ifdef BPF_HAVE_CHANGE_TAIL
 	int ret, nh_off = ctx_load_meta(ctx, 0);
 	__u8 direction  = ctx_load_meta(ctx, 1);
@@ -401,6 +402,7 @@ static __always_inline int __icmp6_handle_ns(struct __ctx_buff *ctx, int nh_off)
 __section_tail(CILIUM_MAP_CALLS, CILIUM_CALL_HANDLE_ICMP6_NS)
 int tail_icmp6_handle_ns(struct __ctx_buff *ctx)
 {
+	return 0;
 	int ret, nh_off = ctx_load_meta(ctx, 0);
 	__u8 direction  = ctx_load_meta(ctx, 1);
 

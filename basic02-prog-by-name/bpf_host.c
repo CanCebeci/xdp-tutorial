@@ -974,6 +974,7 @@ handle_netdev(struct __ctx_buff *ctx, const bool from_host)
 __section(BPF_PROG_TYPE "from-netdev")
 int from_netdev(struct __ctx_buff *ctx)
 {
+	return 0;
 	__u32 __maybe_unused vlan_id;
 
 	/* Filter allowed vlan id's and pass them back to kernel.
@@ -999,6 +1000,7 @@ int from_netdev(struct __ctx_buff *ctx)
 __section(BPF_PROG_TYPE "from-host")
 int from_host(struct __ctx_buff *ctx)
 {
+	return 0;
 	/* Traffic from the host ns going through cilium_host device must
 	 * not be subject to EDT rate-limiting.
 	 */
@@ -1115,6 +1117,7 @@ out:
 __section(BPF_PROG_TYPE "to-host")
 int to_host(struct __ctx_buff *ctx)
 {
+	return 0;
 	__u32 magic = ctx_load_meta(ctx, ENCRYPT_OR_PROXY_MAGIC);
 	__u16 __maybe_unused proto = 0;
 	int ret = CTX_ACT_OK;
